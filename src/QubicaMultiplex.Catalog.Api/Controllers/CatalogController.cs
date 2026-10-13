@@ -16,12 +16,25 @@ public sealed class CatalogController : ControllerBase
     }
 
     [HttpGet("allFilms")]
-    public async Task<ActionResult<IEnumerable<Film>>> GetAllFilmsAsync(CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<string>>> GetAllFilmsAsync(CancellationToken cancellationToken)
     {
         var films = await _catalogService.GetAllFilmsAsync(cancellationToken);
         
-        return films.Any()
-            ? Ok(films)
-            : NotFound();
+        return Ok(films.Select(f => f.Title));
+    }
+
+    [HttpGet("details/{title}")]
+    public async Task<ActionResult<Film>> GetFilmDetailsAsync(string title, CancellationToken cancellationToken)
+    {
+        //Placeholder
+        return new Film
+            {
+                Id = 1,
+                Title = "Kill Bill: Volume 1",
+                Description = "Descrizione di Kill Bill: Volume 1",
+                Director = "Quentin Tarantino",
+                DurationMinutes = 111,
+                ReleaseDate = new DateTime(2003, 10, 10)
+            };
     }
 }
