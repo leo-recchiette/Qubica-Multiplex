@@ -1,5 +1,5 @@
 services:
   api:
-    build: src/Multiplex.Api
+    build: src/QubicaMultiplex.Catalog.Api
     ports:
       - "8080:8080"

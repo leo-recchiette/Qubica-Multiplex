@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Multiplex.Api.Controllers;
+namespace QubicaMultiplex.Catalog.Api.Controllers;
 
 [ApiController]
 [Route("api/hello")]
