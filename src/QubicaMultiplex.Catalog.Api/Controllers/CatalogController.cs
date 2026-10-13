@@ -15,10 +15,10 @@ public sealed class CatalogController : ControllerBase
         _catalogService = catalogService;
     }
 
-    [HttpGet("catalog")]
-    public async Task<ActionResult<IEnumerable<Film>>> GetCatalogAsync(CancellationToken cancellationToken)
+    [HttpGet("allFilms")]
+    public async Task<ActionResult<IEnumerable<Film>>> GetAllFilmsAsync(CancellationToken cancellationToken)
     {
-        var films = await _catalogService.GetLineUpAsync(cancellationToken);
+        var films = await _catalogService.GetAllFilmsAsync(cancellationToken);
         
         return films.Any()
             ? Ok(films)

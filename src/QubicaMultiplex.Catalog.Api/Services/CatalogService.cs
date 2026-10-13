@@ -12,8 +12,8 @@ public sealed class CatalogService
         _catalogRepository = catalogRepository;
     }
 
-    public async Task<IEnumerable<Film>> GetLineUpAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<Film>> GetAllFilmsAsync(CancellationToken cancellationToken)
     {
-        return await _catalogRepository.GetFilmsAsync(cancellationToken);
+        return await _catalogRepository.GetAllFilmsAsync(cancellationToken);
     }
 }

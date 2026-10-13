@@ -5,9 +5,9 @@ namespace QubicaMultiplex.Catalog.Api.Repositories;
 public sealed class CatalogRepository
 {
     
-    public async Task<IEnumerable<Film>> GetFilmsAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<Film>> GetAllFilmsAsync(CancellationToken cancellationToken)
     {
-        # Placeholder
+        // Placeholder
         
         return new List<Film>
         {
