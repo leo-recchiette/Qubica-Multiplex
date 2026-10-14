@@ -16,4 +16,9 @@ public sealed class CatalogService
     {
         return await _catalogRepository.GetAllFilmsAsync(cancellationToken);
     }
+
+    public async Task<Film?> GetFilmDetailsAsync(string title, CancellationToken cancellationToken)
+    {
+        return await _catalogRepository.GetFilmDetailsAsync(title, cancellationToken);
+    }
 }

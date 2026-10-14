@@ -31,4 +31,11 @@ public sealed class CatalogRepository
             }
         };
     }
+
+    public async Task<Film?> GetFilmDetailsAsync(string title, CancellationToken cancellationToken)
+    {
+        var films = await GetAllFilmsAsync(cancellationToken);
+
+        return films.FirstOrDefault(f => string.Equals(f.Title, title, StringComparison.OrdinalIgnoreCase));
+    }
 }

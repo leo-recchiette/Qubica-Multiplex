@@ -26,15 +26,10 @@ public sealed class CatalogController : ControllerBase
     [HttpGet("details/{title}")]
     public async Task<ActionResult<Film>> GetFilmDetailsAsync(string title, CancellationToken cancellationToken)
     {
-        //Placeholder
-        return new Film
-            {
-                Id = 1,
-                Title = "Kill Bill: Volume 1",
-                Description = "Descrizione di Kill Bill: Volume 1",
-                Director = "Quentin Tarantino",
-                DurationMinutes = 111,
-                ReleaseDate = new DateTime(2003, 10, 10)
-            };
+        var film = await _catalogService.GetFilmDetailsAsync(title, cancellationToken);
+
+        return film is not null 
+            ? Ok(film) 
+            : NotFound();
     }
 }
