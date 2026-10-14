@@ -2,7 +2,7 @@ using QubicaMultiplex.Catalog.Api.Models;
 
 namespace QubicaMultiplex.Catalog.Api.Repositories;
 
-public sealed class CatalogRepository : ICatalogRepository
+public class CatalogRepository : ICatalogRepository
 {
     
     public async Task<IEnumerable<Movie>> GetAllMoviesAsync(CancellationToken cancellationToken)

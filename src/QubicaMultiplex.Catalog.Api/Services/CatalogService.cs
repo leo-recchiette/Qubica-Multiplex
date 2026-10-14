@@ -3,7 +3,7 @@ using QubicaMultiplex.Catalog.Api.Repositories;
 
 namespace QubicaMultiplex.Catalog.Api.Services;
 
-public sealed class CatalogService : ICatalogService
+public class CatalogService : ICatalogService
 {
     private readonly ICatalogRepository _catalogRepository;
 

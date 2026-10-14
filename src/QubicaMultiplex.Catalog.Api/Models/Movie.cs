@@ -1,6 +1,6 @@
 namespace QubicaMultiplex.Catalog.Api.Models;
 
-public sealed record Movie
+public record Movie
 {
     public required int Id { get; init; }
     public required string Title { get; init; }
