@@ -12,13 +12,13 @@ public sealed class CatalogService
         _catalogRepository = catalogRepository;
     }
 
-    public async Task<IEnumerable<Film>> GetAllFilmsAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<Movie>> GetAllMoviesAsync(CancellationToken cancellationToken)
     {
-        return await _catalogRepository.GetAllFilmsAsync(cancellationToken);
+        return await _catalogRepository.GetAllMoviesAsync(cancellationToken);
     }
 
-    public async Task<Film?> GetFilmDetailsAsync(string title, CancellationToken cancellationToken)
+    public async Task<Movie?> GetMovieDetailsAsync(string title, CancellationToken cancellationToken)
     {
-        return await _catalogRepository.GetFilmDetailsAsync(title, cancellationToken);
+        return await _catalogRepository.GetMovieDetailsAsync(title, cancellationToken);
     }
 }

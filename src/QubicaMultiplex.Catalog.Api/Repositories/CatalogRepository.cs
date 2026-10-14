@@ -5,13 +5,13 @@ namespace QubicaMultiplex.Catalog.Api.Repositories;
 public sealed class CatalogRepository
 {
     
-    public async Task<IEnumerable<Film>> GetAllFilmsAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<Movie>> GetAllMoviesAsync(CancellationToken cancellationToken)
     {
         // Placeholder
         
-        return new List<Film>
+        return new List<Movie>
         {
-            new Film
+            new Movie
             {
                 Id = 1,
                 Title = "Kill Bill: Volume 1",
@@ -20,7 +20,7 @@ public sealed class CatalogRepository
                 DurationMinutes = 111,
                 ReleaseDate = new DateTime(2003, 10, 10)
             },
-            new Film
+            new Movie
             {
                 Id = 2,
                 Title = "Il Signore degli Anelli - Il ritorno del re",
@@ -32,10 +32,10 @@ public sealed class CatalogRepository
         };
     }
 
-    public async Task<Film?> GetFilmDetailsAsync(string title, CancellationToken cancellationToken)
+    public async Task<Movie?> GetMovieDetailsAsync(string title, CancellationToken cancellationToken)
     {
-        var films = await GetAllFilmsAsync(cancellationToken);
+        var movies = await GetAllMoviesAsync(cancellationToken);
 
-        return films.FirstOrDefault(f => string.Equals(f.Title, title, StringComparison.OrdinalIgnoreCase));
+        return movies.FirstOrDefault(m => string.Equals(m.Title, title, StringComparison.OrdinalIgnoreCase));
     }
 }

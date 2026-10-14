@@ -15,21 +15,21 @@ public sealed class CatalogController : ControllerBase
         _catalogService = catalogService;
     }
 
-    [HttpGet("allFilms")]
-    public async Task<ActionResult<IEnumerable<string>>> GetAllFilmsAsync(CancellationToken cancellationToken)
+    [HttpGet("allMovies")]
+    public async Task<ActionResult<IEnumerable<string>>> GetAllMoviesAsync(CancellationToken cancellationToken)
     {
-        var films = await _catalogService.GetAllFilmsAsync(cancellationToken);
+        var movies = await _catalogService.GetAllMoviesAsync(cancellationToken);
         
-        return Ok(films.Select(f => f.Title));
+        return Ok(movies.Select(m => m.Title));
     }
 
     [HttpGet("details/{title}")]
-    public async Task<ActionResult<Film>> GetFilmDetailsAsync(string title, CancellationToken cancellationToken)
+    public async Task<ActionResult<Movie>> GetMovieDetailsAsync(string title, CancellationToken cancellationToken)
     {
-        var film = await _catalogService.GetFilmDetailsAsync(title, cancellationToken);
+        var movie = await _catalogService.GetMovieDetailsAsync(title, cancellationToken);
 
-        return film is not null 
-            ? Ok(film) 
+        return movie is not null 
+            ? Ok(movie) 
             : NotFound();
     }
 }
