@@ -8,9 +8,9 @@ namespace QubicaMultiplex.Catalog.Api.Controllers;
 [Route("api/[controller]")]
 public sealed class CatalogController : ControllerBase
 {
-    private readonly CatalogService _catalogService;
+    private readonly ICatalogService _catalogService;
 
-    public CatalogController(CatalogService catalogService)
+    public CatalogController(ICatalogService catalogService)
     {
         _catalogService = catalogService;
     }
