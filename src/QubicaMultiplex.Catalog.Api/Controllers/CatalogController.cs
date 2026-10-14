@@ -16,17 +16,17 @@ public class CatalogController : ControllerBase
     }
 
     [HttpGet("allMovies")]
-    public async Task<ActionResult<IEnumerable<string>>> GetAllMoviesAsync(CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<MovieSummary>>> GetAllMoviesAsync(CancellationToken cancellationToken)
     {
         var movies = await _catalogService.GetAllMoviesAsync(cancellationToken);
-        
-        return Ok(movies.Select(m => m.Title));
+
+        return Ok(movies);
     }
 
-    [HttpGet("details/{title}")]
-    public async Task<ActionResult<Movie>> GetMovieDetailsAsync(string title, CancellationToken cancellationToken)
+    [HttpGet("details/{id}")]
+    public async Task<ActionResult<Movie>> GetMovieDetailsAsync(int id, CancellationToken cancellationToken)
     {
-        var movie = await _catalogService.GetMovieDetailsAsync(title, cancellationToken);
+        var movie = await _catalogService.GetMovieDetailsAsync(id, cancellationToken);
 
         return movie is not null 
             ? Ok(movie) 

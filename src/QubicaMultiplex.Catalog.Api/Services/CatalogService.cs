@@ -10,9 +10,9 @@ public class CatalogService : ICatalogService
     public CatalogService(ICatalogRepository catalogRepository)
         => _catalogRepository = catalogRepository;
     
-    public async Task<IEnumerable<Movie>> GetAllMoviesAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<MovieSummary>> GetAllMoviesAsync(CancellationToken cancellationToken)
         => await _catalogRepository.GetAllMoviesAsync(cancellationToken);
-    
-    public async Task<Movie?> GetMovieDetailsAsync(string title, CancellationToken cancellationToken)
-        => await _catalogRepository.GetMovieDetailsAsync(title, cancellationToken);
+
+    public async Task<Movie?> GetMovieDetailsAsync(int id, CancellationToken cancellationToken)
+        => await _catalogRepository.GetMovieDetailsAsync(id, cancellationToken);
 }
