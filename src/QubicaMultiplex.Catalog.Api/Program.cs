@@ -1,13 +1,11 @@
-using QubicaMultiplex.Catalog.Api.Repositories;
-using QubicaMultiplex.Catalog.Api.Services;
+using QubicaMultiplex.Catalog.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<ICatalogService, CatalogService>();
-builder.Services.AddScoped<ICatalogRepository, CatalogRepository>();
+builder.Services.AddCatalogServices();
 
 var app = builder.Build();
 
