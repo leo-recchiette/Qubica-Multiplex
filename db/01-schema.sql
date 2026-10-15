@@ -30,8 +30,10 @@ CREATE TABLE catalog.movie
 
 CREATE TABLE catalog.hall
 (
-    id   integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name text NOT NULL,
+    id            integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name          text    NOT NULL,
+    row_count     integer NOT NULL CHECK (row_count BETWEEN 1 AND 26),
+    seats_per_row integer NOT NULL CHECK (seats_per_row > 0),
 
     CONSTRAINT uq_hall_name UNIQUE (name)
 );
