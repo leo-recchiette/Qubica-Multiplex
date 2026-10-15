@@ -31,6 +31,6 @@ public class BookingService : IBookingService
 
         var bookedSeats = await _bookingRepository.GetBookedSeatsAsync(showId, cancellationToken);
 
-        return showtime.Hall.GetAllSeats().Except(bookedSeats).ToList();
+        return showtime.Hall.GetAvailableSeats(bookedSeats).ToList();
     }
 }

@@ -4,7 +4,10 @@ namespace QubicaMultiplex.Booking.Api.Extensions;
 
 public static class HallExtensions
 {
-    public static IEnumerable<Seat> GetAllSeats(this Hall hall)
+    public static IEnumerable<Seat> GetAvailableSeats(this Hall hall, IEnumerable<Seat> bookedSeats)
+        => hall.GetAllSeats().Except(bookedSeats);
+
+    private static IEnumerable<Seat> GetAllSeats(this Hall hall)
     {
         var seats = new List<Seat>();
 
