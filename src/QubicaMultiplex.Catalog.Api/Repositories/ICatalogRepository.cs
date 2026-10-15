@@ -9,4 +9,6 @@ public interface ICatalogRepository
     Task<Movie?> GetMovieDetailsAsync(int id, CancellationToken cancellationToken);
 
     Task<IEnumerable<Showtime>> GetMovieShowsAsync(int movieId, CancellationToken cancellationToken);
+
+    Task<ShowtimeDetailsEntity?> GetShowtimeDetailsAsync(int showId, CancellationToken cancellationToken);
 }

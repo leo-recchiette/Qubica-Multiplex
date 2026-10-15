@@ -69,10 +69,10 @@ VALUES ('The Lord of the Rings: The Fellowship of the Ring',
         (SELECT id FROM catalog.genre WHERE name = 'Science Fiction'),
         137, '2025-03-07');
 
-INSERT INTO catalog.hall (name, row_count, seats_per_row)
-VALUES ('Hall 1', 8, 30),
-       ('Hall 2', 6, 20),
-       ('Hall 3', 5, 12);
+INSERT INTO catalog.hall (name, last_row, seats_per_row)
+VALUES ('Hall 1', 'H', 30),
+       ('Hall 2', 'F', 20),
+       ('Hall 3', 'E', 12);
 
 INSERT INTO catalog.showtime (movie_id, hall_id, starts_at)
 VALUES ((SELECT id FROM catalog.movie WHERE title = 'The Lord of the Rings: The Fellowship of the Ring'), (SELECT id FROM catalog.hall WHERE name = 'Hall 2'), '2026-10-20 17:00'),

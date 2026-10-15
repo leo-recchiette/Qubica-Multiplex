@@ -42,4 +42,14 @@ public class CatalogController : ControllerBase
             ? Ok(shows)
             : NotFound();
     }
+
+    [HttpGet("showtime/{showId}")]
+    public async Task<ActionResult<ShowtimeDetails>> GetShowtimeDetailsAsync(int showId, CancellationToken cancellationToken)
+    {
+        var showtime = await _catalogService.GetShowtimeDetailsAsync(showId, cancellationToken);
+
+        return showtime is not null
+            ? Ok(showtime)
+            : NotFound();
+    }
 }

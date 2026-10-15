@@ -59,4 +59,22 @@ public class CatalogRepository : ICatalogRepository
 
         return await connection.QueryAsync<Showtime>(new CommandDefinition(sql, new { MovieId = movieId }, cancellationToken: cancellationToken));
     }
+
+    public async Task<ShowtimeDetailsEntity?> GetShowtimeDetailsAsync(int showId, CancellationToken cancellationToken)
+    {
+        const string sql = """
+            SELECT s.id AS ShowId,
+                   s.starts_at AS StartsAt,
+                   h.name AS HallName,
+                   h.last_row AS LastRow,
+                   h.seats_per_row AS SeatsPerRow
+            FROM catalog.showtime s
+            JOIN catalog.hall h ON h.id = s.hall_id
+            WHERE s.id = @ShowId
+            """;
+
+        await using var connection = new NpgsqlConnection(_connectionString);
+
+        return await connection.QueryFirstOrDefaultAsync<ShowtimeDetailsEntity>(new CommandDefinition(sql, new { ShowId = showId }, cancellationToken: cancellationToken));
+    }
 }
