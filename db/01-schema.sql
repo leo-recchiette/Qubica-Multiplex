@@ -27,3 +27,10 @@ CREATE TABLE catalog.movie
     duration_minutes integer NOT NULL CHECK (duration_minutes > 0),
     release_date     date    NOT NULL
 );
+
+CREATE TABLE catalog.showtime
+(
+    id        integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    movie_id  integer   NOT NULL REFERENCES catalog.movie (id),
+    starts_at timestamp NOT NULL
+);

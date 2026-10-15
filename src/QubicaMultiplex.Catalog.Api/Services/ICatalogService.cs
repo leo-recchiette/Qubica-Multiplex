@@ -7,4 +7,6 @@ public interface ICatalogService
     Task<IEnumerable<MovieSummary>> GetAllMoviesAsync(CancellationToken cancellationToken);
 
     Task<Movie?> GetMovieDetailsAsync(int id, CancellationToken cancellationToken);
+
+    Task<IEnumerable<Showtime>> GetMovieShowsAsync(int movieId, CancellationToken cancellationToken);
 }

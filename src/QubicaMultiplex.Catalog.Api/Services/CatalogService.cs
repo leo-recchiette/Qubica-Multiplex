@@ -15,4 +15,7 @@ public class CatalogService : ICatalogService
 
     public async Task<Movie?> GetMovieDetailsAsync(int id, CancellationToken cancellationToken)
         => await _catalogRepository.GetMovieDetailsAsync(id, cancellationToken);
+
+    public async Task<IEnumerable<Showtime>> GetMovieShowsAsync(int movieId, CancellationToken cancellationToken)
+        => await _catalogRepository.GetMovieShowsAsync(movieId, cancellationToken);
 }

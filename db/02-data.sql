@@ -68,3 +68,31 @@ VALUES ('The Lord of the Rings: The Fellowship of the Ring',
         (SELECT id FROM catalog.director WHERE first_name = 'Joon-ho' AND last_name = 'Bong'),
         (SELECT id FROM catalog.genre WHERE name = 'Science Fiction'),
         137, '2025-03-07');
+
+INSERT INTO catalog.showtime (movie_id, starts_at)
+VALUES ((SELECT id FROM catalog.movie WHERE title = 'The Lord of the Rings: The Fellowship of the Ring'), '2026-10-20 17:00'),
+       ((SELECT id FROM catalog.movie WHERE title = 'The Lord of the Rings: The Fellowship of the Ring'), '2026-10-21 20:30'),
+
+       ((SELECT id FROM catalog.movie WHERE title = 'The Lord of the Rings: The Two Towers'), '2026-10-20 20:30'),
+       ((SELECT id FROM catalog.movie WHERE title = 'The Lord of the Rings: The Two Towers'), '2026-10-22 17:00'),
+
+       ((SELECT id FROM catalog.movie WHERE title = 'The Lord of the Rings: The Return of the King'), '2026-10-21 17:00'),
+       ((SELECT id FROM catalog.movie WHERE title = 'The Lord of the Rings: The Return of the King'), '2026-10-22 20:30'),
+
+       ((SELECT id FROM catalog.movie WHERE title = 'Kill Bill: Volume 1'), '2026-10-20 18:00'),
+       ((SELECT id FROM catalog.movie WHERE title = 'Kill Bill: Volume 1'), '2026-10-21 22:00'),
+
+       ((SELECT id FROM catalog.movie WHERE title = 'Kill Bill: Volume 2'), '2026-10-20 22:00'),
+       ((SELECT id FROM catalog.movie WHERE title = 'Kill Bill: Volume 2'), '2026-10-21 18:00'),
+
+       ((SELECT id FROM catalog.movie WHERE title = 'Blue Moon'), '2026-10-20 19:00'),
+       ((SELECT id FROM catalog.movie WHERE title = 'Blue Moon'), '2026-10-22 21:00'),
+
+       ((SELECT id FROM catalog.movie WHERE title = 'Oldboy'), '2026-10-20 21:30'),
+       ((SELECT id FROM catalog.movie WHERE title = 'Oldboy'), '2026-10-22 22:00'),
+
+       ((SELECT id FROM catalog.movie WHERE title = 'Spirited Away'), '2026-10-20 16:00'),
+       ((SELECT id FROM catalog.movie WHERE title = 'Spirited Away'), '2026-10-21 16:00'),
+
+       ((SELECT id FROM catalog.movie WHERE title = 'Mickey 17'), '2026-10-21 21:00'),
+       ((SELECT id FROM catalog.movie WHERE title = 'Mickey 17'), '2026-10-22 18:30');

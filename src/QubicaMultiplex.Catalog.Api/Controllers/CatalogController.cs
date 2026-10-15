@@ -28,8 +28,18 @@ public class CatalogController : ControllerBase
     {
         var movie = await _catalogService.GetMovieDetailsAsync(id, cancellationToken);
 
-        return movie is not null 
-            ? Ok(movie) 
+        return movie is not null
+            ? Ok(movie)
+            : NotFound();
+    }
+
+    [HttpGet("shows/{movieId}")]
+    public async Task<ActionResult<IEnumerable<Showtime>>> GetMovieShowsAsync(int movieId, CancellationToken cancellationToken)
+    {
+        var shows = await _catalogService.GetMovieShowsAsync(movieId, cancellationToken);
+
+        return shows.Any()
+            ? Ok(shows)
             : NotFound();
     }
 }

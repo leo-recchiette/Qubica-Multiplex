@@ -42,4 +42,19 @@ public class CatalogRepository : ICatalogRepository
 
         return await connection.QueryFirstOrDefaultAsync<Movie>(new CommandDefinition(sql, new { Id = id }, cancellationToken: cancellationToken));
     }
+
+    public async Task<IEnumerable<Showtime>> GetMovieShowsAsync(int movieId, CancellationToken cancellationToken)
+    {
+        const string sql = """
+            SELECT id AS ShowId,
+                   starts_at AS StartsAt
+            FROM catalog.showtime
+            WHERE movie_id = @MovieId
+            ORDER BY starts_at
+            """;
+
+        await using var connection = new NpgsqlConnection(_connectionString);
+
+        return await connection.QueryAsync<Showtime>(new CommandDefinition(sql, new { MovieId = movieId }, cancellationToken: cancellationToken));
+    }
 }
