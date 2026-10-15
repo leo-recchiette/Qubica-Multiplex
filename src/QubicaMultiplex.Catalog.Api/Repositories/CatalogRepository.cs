@@ -46,11 +46,13 @@ public class CatalogRepository : ICatalogRepository
     public async Task<IEnumerable<Showtime>> GetMovieShowsAsync(int movieId, CancellationToken cancellationToken)
     {
         const string sql = """
-            SELECT id AS ShowId,
-                   starts_at AS StartsAt
-            FROM catalog.showtime
-            WHERE movie_id = @MovieId
-            ORDER BY starts_at
+            SELECT s.id AS ShowId,
+                   s.starts_at AS StartsAt,
+                   h.name AS hall
+            FROM catalog.showtime s
+            JOIN catalog.hall h ON h.id = s.hall_id
+            WHERE s.movie_id = @MovieId
+            ORDER BY s.starts_at
             """;
 
         await using var connection = new NpgsqlConnection(_connectionString);

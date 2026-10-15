@@ -28,9 +28,18 @@ CREATE TABLE catalog.movie
     release_date     date    NOT NULL
 );
 
+CREATE TABLE catalog.hall
+(
+    id   integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name text NOT NULL,
+
+    CONSTRAINT uq_hall_name UNIQUE (name)
+);
+
 CREATE TABLE catalog.showtime
 (
     id        integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     movie_id  integer   NOT NULL REFERENCES catalog.movie (id),
+    hall_id   integer   NOT NULL REFERENCES catalog.hall (id),
     starts_at timestamp NOT NULL
 );
