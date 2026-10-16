@@ -1,5 +1,6 @@
 using Dapper;
 using Npgsql;
+using QubicaMultiplex.Booking.Api.Exceptions;
 using QubicaMultiplex.Booking.Api.Models;
 
 namespace QubicaMultiplex.Booking.Api.Repositories;
@@ -64,27 +65,34 @@ public class BookingRepository : IBookingRepository
         await connection.OpenAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
-        var booking = await connection.QuerySingleAsync<BookingEntity>(new CommandDefinition(
-            bookingSql,
-            new { CustomerId = request.Customer.Id, CustomerEmail = request.Customer.Email },
-            transaction,
-            cancellationToken: cancellationToken));
-
-        foreach (var show in request.Shows)
+        try
         {
-            foreach (var seat in show.Seats.ChosenSeats)
+            var booking = await connection.QuerySingleAsync<BookingEntity>(new CommandDefinition(
+                bookingSql,
+                new { CustomerId = request.Customer.Id, CustomerEmail = request.Customer.Email },
+                transaction,
+                cancellationToken: cancellationToken));
+
+            foreach (var show in request.Shows)
             {
-                await connection.ExecuteAsync(new CommandDefinition(
-                    bookingSeatSql,
-                    new { BookingId = booking.Id, show.ShowId, seat.Row, seat.Number },
-                    transaction,
-                    cancellationToken: cancellationToken));
+                foreach (var seat in show.Seats.ChosenSeats)
+                {
+                    await connection.ExecuteAsync(new CommandDefinition(
+                        bookingSeatSql,
+                        new { BookingId = booking.Id, show.ShowId, seat.Row, seat.Number },
+                        transaction,
+                        cancellationToken: cancellationToken));
+                }
             }
+
+            await transaction.CommitAsync(cancellationToken);
+
+            return booking;
         }
-
-        await transaction.CommitAsync(cancellationToken);
-
-        return booking;
+        catch (PostgresException exception) when (exception.SqlState == PostgresErrorCodes.UniqueViolation)
+        {
+            throw new SeatAlreadyBookedException(exception);
+        }
     }
 
     public async Task<bool> DeleteBookingAsync(int bookingId, CancellationToken cancellationToken)

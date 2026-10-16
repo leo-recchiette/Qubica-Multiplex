@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using QubicaMultiplex.Booking.Api.Exceptions;
 using QubicaMultiplex.Booking.Api.Models;
 using QubicaMultiplex.Booking.Api.Services;
 
@@ -38,9 +39,14 @@ public class BookingController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<BookingDetails>> CreateBookingAsync(BookingRequest request, CancellationToken cancellationToken)
     {
-        var booking = await _bookingService.CreateBookingAsync(request, cancellationToken);
-
-        return booking;
+        try
+        {
+            return await _bookingService.CreateBookingAsync(request, cancellationToken);
+        }
+        catch (SeatAlreadyBookedException exception)
+        {
+            return Problem(detail: exception.Message, statusCode: StatusCodes.Status409Conflict);
+        }
     }
 
     [HttpDelete("{bookingId}")]
