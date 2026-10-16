@@ -33,4 +33,7 @@ public class BookingService : IBookingService
 
         return showtime.Hall.GetAvailableSeats(bookedSeats).ToList();
     }
+
+    public async Task<bool> DeleteBookingAsync(int id, CancellationToken cancellationToken)
+        => await _bookingRepository.DeleteBookingAsync(id, cancellationToken);
 }

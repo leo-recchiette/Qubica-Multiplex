@@ -31,4 +31,14 @@ public class BookingController : ControllerBase
         // Placeholder
         return Ok();
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteBookingAsync(int id, CancellationToken cancellationToken)
+    {
+        var deleted = await _bookingService.DeleteBookingAsync(id, cancellationToken);
+
+        return deleted
+            ? NoContent()
+            : NotFound();
+    }
 }

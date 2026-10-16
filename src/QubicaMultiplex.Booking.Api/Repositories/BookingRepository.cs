@@ -26,4 +26,15 @@ public class BookingRepository : IBookingRepository
 
         return await connection.QueryAsync<Seat>(new CommandDefinition(sql, new { ShowId = showId }, cancellationToken: cancellationToken));
     }
+
+    public async Task<bool> DeleteBookingAsync(int id, CancellationToken cancellationToken)
+    {
+        const string sql = "DELETE FROM booking.booking WHERE id = @Id";
+
+        await using var connection = new NpgsqlConnection(_connectionString);
+
+        var deletedRows = await connection.ExecuteAsync(new CommandDefinition(sql, new { Id = id }, cancellationToken: cancellationToken));
+
+        return deletedRows > 0;
+    }
 }
