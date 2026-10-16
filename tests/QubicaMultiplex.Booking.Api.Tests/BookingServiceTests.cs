@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json;
 using NSubstitute;
 using QubicaMultiplex.Booking.Api.Clients;
 using QubicaMultiplex.Booking.Api.Models;
@@ -52,6 +53,22 @@ public class BookingServiceTests
         CollectionAssert.AreEqual(expected, actual!.ToList());
     }
 
+    [TestMethod]
+    public async Task Should_ReturnBookingDetails_When_BookingIsCreated()
+    {
+        var bookingRequest = BookingRequest();
+
+        _bookingRepository
+            .CreateBookingAsync(bookingRequest, Arg.Any<CancellationToken>())
+            .Returns(BookingEntity());
+
+        var actual = await _sut.CreateBookingAsync(bookingRequest, CancellationToken.None);
+
+        var expected = BookingDetails();
+
+        Assert.AreEqual(JsonSerializer.Serialize(expected), JsonSerializer.Serialize(actual));
+    }
+
     #region Utils
 
     private static IApiResponse<ShowtimeDetails> ApiResponse(HttpStatusCode statusCode, ShowtimeDetails? content = null)
@@ -81,6 +98,44 @@ public class BookingServiceTests
         {
             Row = row,
             Number = number
+        };
+
+    private static BookingRequest BookingRequest()
+        => new BookingRequest
+        {
+            Customer = new Customer { Id = 1, Email = "leonardo@example.com" },
+            Shows = new List<ShowBookingRequest>
+            {
+                new ShowBookingRequest
+                {
+                    ShowId = 13,
+                    Seats = new SeatSelection { ChosenSeats = new List<Seat> { Seat("F", 12), Seat("F", 13) }, QuantityToBook = 2 }
+                },
+                new ShowBookingRequest
+                {
+                    ShowId = 7,
+                    Seats = new SeatSelection { ChosenSeats = new List<Seat> { Seat("A", 1) } }
+                }
+            }
+        };
+
+    private static BookingEntity BookingEntity()
+        => new BookingEntity
+        {
+            Id = 1,
+            CreatedAt = new DateTime(2026, 10, 16, 22, 28, 0)
+        };
+
+    private static BookingDetails BookingDetails()
+        => new BookingDetails
+        {
+            Id = 1,
+            CreatedAt = new DateTime(2026, 10, 16, 22, 28, 0),
+            Shows = new List<BookedShow>
+            {
+                new BookedShow { ShowId = 13, Seats = new List<Seat> { Seat("F", 12), Seat("F", 13) } },
+                new BookedShow { ShowId = 7, Seats = new List<Seat> { Seat("A", 1) } }
+            }
         };
 
     #endregion
