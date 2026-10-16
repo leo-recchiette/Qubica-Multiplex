@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QubicaMultiplex.Catalog.Api.Tests", "tests\QubicaMultiplex.Catalog.Api.Tests\QubicaMultiplex.Catalog.Api.Tests.csproj", "{AC1900F9-AF69-44A3-A772-971D7450E37D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QubicaMultiplex.Booking.Api.Tests", "tests\QubicaMultiplex.Booking.Api.Tests\QubicaMultiplex.Booking.Api.Tests.csproj", "{8076B4B4-11F6-4603-B643-4FEB41116050}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,18 @@ Global
 		{AC1900F9-AF69-44A3-A772-971D7450E37D}.Release|x64.Build.0 = Release|Any CPU
 		{AC1900F9-AF69-44A3-A772-971D7450E37D}.Release|x86.ActiveCfg = Release|Any CPU
 		{AC1900F9-AF69-44A3-A772-971D7450E37D}.Release|x86.Build.0 = Release|Any CPU
+		{8076B4B4-11F6-4603-B643-4FEB41116050}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8076B4B4-11F6-4603-B643-4FEB41116050}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8076B4B4-11F6-4603-B643-4FEB41116050}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8076B4B4-11F6-4603-B643-4FEB41116050}.Debug|x64.Build.0 = Debug|Any CPU
+		{8076B4B4-11F6-4603-B643-4FEB41116050}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8076B4B4-11F6-4603-B643-4FEB41116050}.Debug|x86.Build.0 = Debug|Any CPU
+		{8076B4B4-11F6-4603-B643-4FEB41116050}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8076B4B4-11F6-4603-B643-4FEB41116050}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8076B4B4-11F6-4603-B643-4FEB41116050}.Release|x64.ActiveCfg = Release|Any CPU
+		{8076B4B4-11F6-4603-B643-4FEB41116050}.Release|x64.Build.0 = Release|Any CPU
+		{8076B4B4-11F6-4603-B643-4FEB41116050}.Release|x86.ActiveCfg = Release|Any CPU
+		{8076B4B4-11F6-4603-B643-4FEB41116050}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,5 +81,6 @@ Global
 		{B4AC4680-6932-48F9-B8A5-414A01A61B86} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{D690E25B-5E3D-4985-8134-7AD43BB662F8} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{AC1900F9-AF69-44A3-A772-971D7450E37D} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{8076B4B4-11F6-4603-B643-4FEB41116050} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal
