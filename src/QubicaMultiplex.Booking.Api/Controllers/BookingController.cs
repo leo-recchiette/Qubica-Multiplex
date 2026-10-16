@@ -25,6 +25,16 @@ public class BookingController : ControllerBase
             : NotFound();
     }
 
+    [HttpGet("customer/{customerId}")]
+    public async Task<ActionResult<IEnumerable<BookingDetails>>> GetCustomerBookingsAsync(int customerId, CancellationToken cancellationToken)
+    {
+        var bookings = await _bookingService.GetCustomerBookingsAsync(customerId, cancellationToken);
+
+        return bookings.Any()
+            ? Ok(bookings)
+            : NotFound();
+    }
+
     [HttpPost]
     public IActionResult CreateBooking(BookingRequest request)
     {
@@ -32,10 +42,10 @@ public class BookingController : ControllerBase
         return Ok();
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteBookingAsync(int id, CancellationToken cancellationToken)
+    [HttpDelete("{bookingId}")]
+    public async Task<IActionResult> DeleteBookingAsync(int bookingId, CancellationToken cancellationToken)
     {
-        var deleted = await _bookingService.DeleteBookingAsync(id, cancellationToken);
+        var deleted = await _bookingService.DeleteBookingAsync(bookingId, cancellationToken);
 
         return deleted
             ? NoContent()

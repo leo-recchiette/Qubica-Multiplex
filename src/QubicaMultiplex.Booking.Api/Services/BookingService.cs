@@ -34,6 +34,28 @@ public class BookingService : IBookingService
         return showtime.Hall.GetAvailableSeats(bookedSeats).ToList();
     }
 
-    public async Task<bool> DeleteBookingAsync(int id, CancellationToken cancellationToken)
-        => await _bookingRepository.DeleteBookingAsync(id, cancellationToken);
+    public async Task<IEnumerable<BookingDetails>> GetCustomerBookingsAsync(int customerId, CancellationToken cancellationToken)
+    {
+        var entities = await _bookingRepository.GetCustomerBookingsAsync(customerId, cancellationToken);
+
+        return entities
+            .GroupBy(entity => new { entity.BookingId, entity.CreatedAt })
+            .Select(booking => new BookingDetails
+            {
+                Id = booking.Key.BookingId,
+                CreatedAt = booking.Key.CreatedAt,
+                Shows = booking
+                    .GroupBy(entity => entity.ShowId)
+                    .Select(show => new BookedShow
+                    {
+                        ShowId = show.Key,
+                        Seats = show.Select(entity => new Seat { Row = entity.Row, Number = entity.Number }).ToList()
+                    })
+                    .ToList()
+            })
+            .ToList();
+    }
+
+    public async Task<bool> DeleteBookingAsync(int bookingId, CancellationToken cancellationToken)
+        => await _bookingRepository.DeleteBookingAsync(bookingId, cancellationToken);
 }

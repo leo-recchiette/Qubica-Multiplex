@@ -6,5 +6,7 @@ public interface IBookingRepository
 {
     Task<IEnumerable<Seat>> GetBookedSeatsAsync(int showId, CancellationToken cancellationToken);
 
-    Task<bool> DeleteBookingAsync(int id, CancellationToken cancellationToken);
+    Task<IEnumerable<BookingDetailsEntity>> GetCustomerBookingsAsync(int customerId, CancellationToken cancellationToken);
+
+    Task<bool> DeleteBookingAsync(int bookingId, CancellationToken cancellationToken);
 }
