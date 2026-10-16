@@ -1,3 +1,4 @@
+using AwesomeAssertions;
 using QubicaMultiplex.Booking.Api.Extensions;
 using QubicaMultiplex.Booking.Api.Models;
 
@@ -17,7 +18,7 @@ public class HallExtensionsTests
             Seat("B", 1), Seat("B", 2), Seat("B", 3)
         };
 
-        CollectionAssert.AreEqual(expected, actual.ToList());
+        actual.Should().Equal(expected);
     }
 
     [TestMethod]
@@ -33,7 +34,7 @@ public class HallExtensionsTests
             Seat("B", 1), Seat("B", 3)
         };
 
-        CollectionAssert.AreEqual(expected, actual.ToList());
+        actual.Should().Equal(expected);
     }
 
     [TestMethod]
@@ -47,7 +48,7 @@ public class HallExtensionsTests
 
         var actual = Hall().GetAvailableSeats(bookedSeats);
 
-        Assert.IsEmpty(actual);
+        actual.Should().BeEmpty();
     }
 
     #region Utils

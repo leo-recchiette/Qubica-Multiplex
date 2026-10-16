@@ -1,3 +1,5 @@
+using AwesomeAssertions;
+using AwesomeAssertions.Extensions;
 using NSubstitute;
 using QubicaMultiplex.Catalog.Api.Models;
 using QubicaMultiplex.Catalog.Api.Repositories;
@@ -25,7 +27,7 @@ public class CatalogServiceTests
 
         var expected = ShowtimeDetails();
 
-        Assert.AreEqual(expected, actual);
+        actual.Should().BeEquivalentTo(expected);
     }
 
     [TestMethod]
@@ -37,7 +39,7 @@ public class CatalogServiceTests
 
         var actual = await _sut.GetShowtimeDetailsAsync(999, CancellationToken.None);
 
-        Assert.IsNull(actual);
+        actual.Should().BeNull();
     }
 
     #region Utils
@@ -46,7 +48,7 @@ public class CatalogServiceTests
         => new ShowtimeDetailsEntity
         {
             ShowId = 13,
-            StartsAt = new DateTime(2026, 10, 20, 21, 30, 0),
+            StartsAt = 20.October(2026).At(21, 30),
             HallName = "Hall 1",
             LastRow = "H",
             SeatsPerRow = 30
@@ -56,7 +58,7 @@ public class CatalogServiceTests
         => new ShowtimeDetails
         {
             ShowId = 13,
-            StartsAt = new DateTime(2026, 10, 20, 21, 30, 0),
+            StartsAt = 20.October(2026).At(21, 30),
             Hall = Hall()
         };
 

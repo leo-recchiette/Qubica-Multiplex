@@ -1,5 +1,6 @@
 using System.Net;
-using System.Text.Json;
+using AwesomeAssertions;
+using AwesomeAssertions.Extensions;
 using NSubstitute;
 using QubicaMultiplex.Booking.Api.Clients;
 using QubicaMultiplex.Booking.Api.Models;
@@ -28,7 +29,7 @@ public class BookingServiceTests
 
         var actual = await _sut.GetAvailableSeatsAsync(999, CancellationToken.None);
 
-        Assert.IsNull(actual);
+        actual.Should().BeNull();
     }
 
     [TestMethod]
@@ -50,7 +51,7 @@ public class BookingServiceTests
             Seat("B", 1), Seat("B", 3)
         };
 
-        CollectionAssert.AreEqual(expected, actual!.ToList());
+        actual.Should().Equal(expected);
     }
 
     [TestMethod]
@@ -66,7 +67,7 @@ public class BookingServiceTests
 
         var expected = BookingDetails();
 
-        Assert.AreEqual(JsonSerializer.Serialize(expected), JsonSerializer.Serialize(actual));
+        actual.Should().BeEquivalentTo(expected);
     }
 
     #region Utils
@@ -81,7 +82,7 @@ public class BookingServiceTests
         => new ShowtimeDetails
         {
             ShowId = 13,
-            StartsAt = new DateTime(2026, 10, 20, 21, 30, 0),
+            StartsAt = 20.October(2026).At(21, 30),
             Hall = Hall()
         };
 
@@ -123,14 +124,14 @@ public class BookingServiceTests
         => new BookingEntity
         {
             Id = 1,
-            CreatedAt = new DateTime(2026, 10, 16, 22, 28, 0)
+            CreatedAt = 16.October(2026).At(22, 28)
         };
 
     private static BookingDetails BookingDetails()
         => new BookingDetails
         {
             Id = 1,
-            CreatedAt = new DateTime(2026, 10, 16, 22, 28, 0),
+            CreatedAt = 16.October(2026).At(22, 28),
             Shows = new List<BookedShow>
             {
                 new BookedShow { ShowId = 13, Seats = new List<Seat> { Seat("F", 12), Seat("F", 13) } },
