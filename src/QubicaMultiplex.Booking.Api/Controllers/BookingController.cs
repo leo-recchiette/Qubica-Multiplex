@@ -36,10 +36,11 @@ public class BookingController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CreateBooking(BookingRequest request)
+    public async Task<ActionResult<BookingDetails>> CreateBookingAsync(BookingRequest request, CancellationToken cancellationToken)
     {
-        // Placeholder
-        return Ok();
+        var booking = await _bookingService.CreateBookingAsync(request, cancellationToken);
+
+        return booking;
     }
 
     [HttpDelete("{bookingId}")]

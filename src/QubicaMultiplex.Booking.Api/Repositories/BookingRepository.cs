@@ -46,6 +46,47 @@ public class BookingRepository : IBookingRepository
         return await connection.QueryAsync<BookingDetailsEntity>(new CommandDefinition(sql, new { CustomerId = customerId }, cancellationToken: cancellationToken));
     }
 
+    public async Task<BookingEntity> CreateBookingAsync(BookingRequest request, CancellationToken cancellationToken)
+    {
+        const string bookingSql = """
+            INSERT INTO booking.booking (customer_id, customer_email)
+            VALUES (@CustomerId, @CustomerEmail)
+            RETURNING id,
+                      created_at AS CreatedAt
+            """;
+
+        const string bookingSeatSql = """
+            INSERT INTO booking.booking_seat (booking_id, showtime_id, row_label, seat_number)
+            VALUES (@BookingId, @ShowId, @Row, @Number)
+            """;
+
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        var booking = await connection.QuerySingleAsync<BookingEntity>(new CommandDefinition(
+            bookingSql,
+            new { CustomerId = request.Customer.Id, CustomerEmail = request.Customer.Email },
+            transaction,
+            cancellationToken: cancellationToken));
+
+        foreach (var show in request.Shows)
+        {
+            foreach (var seat in show.Seats.ChosenSeats)
+            {
+                await connection.ExecuteAsync(new CommandDefinition(
+                    bookingSeatSql,
+                    new { BookingId = booking.Id, show.ShowId, seat.Row, seat.Number },
+                    transaction,
+                    cancellationToken: cancellationToken));
+            }
+        }
+
+        await transaction.CommitAsync(cancellationToken);
+
+        return booking;
+    }
+
     public async Task<bool> DeleteBookingAsync(int bookingId, CancellationToken cancellationToken)
     {
         const string sql = "DELETE FROM booking.booking WHERE id = @BookingId";
