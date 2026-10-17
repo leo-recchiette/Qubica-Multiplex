@@ -142,6 +142,46 @@ public class SeatServiceTests
             .WithMessage("Show 13 has only 2 available seats, 5 requested.");
     }
 
+    [TestMethod]
+    public async Task Should_ThrowSeatNotAvailableException_When_ChosenSeatIsAlreadyBooked()
+    {
+        _catalogClient
+            .GetShowtimeDetailsAsync(13, Arg.Any<CancellationToken>())
+            .Returns(ApiResponse(HttpStatusCode.OK, ShowtimeDetails()));
+
+        _bookingRepository
+            .GetBookedSeatsAsync(13, Arg.Any<CancellationToken>())
+            .Returns(new List<Seat> { Seat("B", 2) });
+
+        var shows = new List<ShowBookingRequest>
+        {
+            ShowBookingRequest(13, new List<Seat> { Seat("B", 1), Seat("B", 2) }, 2)
+        };
+
+        var actual = () => _sut.AssignSeatsAsync(shows, CancellationToken.None);
+
+        await actual.Should().ThrowAsync<SeatNotAvailableException>()
+            .WithMessage("Seats B2 are not available for show 13.");
+    }
+
+    [TestMethod]
+    public async Task Should_ThrowSeatNotAvailableException_When_ChosenSeatDoesNotExist()
+    {
+        _catalogClient
+            .GetShowtimeDetailsAsync(13, Arg.Any<CancellationToken>())
+            .Returns(ApiResponse(HttpStatusCode.OK, ShowtimeDetails()));
+
+        var shows = new List<ShowBookingRequest>
+        {
+            ShowBookingRequest(13, new List<Seat> { Seat("Z", 99) }, 1)
+        };
+
+        var actual = () => _sut.AssignSeatsAsync(shows, CancellationToken.None);
+
+        await actual.Should().ThrowAsync<SeatNotAvailableException>()
+            .WithMessage("Seats Z99 are not available for show 13.");
+    }
+
     #region Utils
 
     private static IApiResponse<ShowtimeDetails> ApiResponse(HttpStatusCode statusCode, ShowtimeDetails? content = null)
