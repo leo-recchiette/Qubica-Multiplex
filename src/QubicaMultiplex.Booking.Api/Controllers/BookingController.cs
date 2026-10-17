@@ -60,4 +60,14 @@ public class BookingController : ControllerBase
             ? NoContent()
             : NotFound();
     }
+
+    [HttpDelete("remove/{bookingId}/show/{showId}")]
+    public async Task<IActionResult> DeleteBookedShowAsync(int bookingId, int showId, CancellationToken cancellationToken)
+    {
+        var deleted = await _bookingService.DeleteBookedShowAsync(bookingId, showId, cancellationToken);
+
+        return deleted
+            ? NoContent()
+            : NotFound();
+    }
 }

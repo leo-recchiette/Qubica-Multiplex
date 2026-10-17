@@ -11,4 +11,6 @@ public interface IBookingRepository
     Task<BookingEntity> CreateBookingAsync(Customer customer, IEnumerable<BookedShow> shows, CancellationToken cancellationToken);
 
     Task<bool> DeleteBookingAsync(int bookingId, CancellationToken cancellationToken);
+
+    Task<bool> DeleteBookedShowAsync(int bookingId, int showId, CancellationToken cancellationToken);
 }

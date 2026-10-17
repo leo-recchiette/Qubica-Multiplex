@@ -106,4 +106,39 @@ public class BookingRepository : IBookingRepository
 
         return deletedRows > 0;
     }
+
+    public async Task<bool> DeleteBookedShowAsync(int bookingId, int showId, CancellationToken cancellationToken)
+    {
+        const string bookingSeatSql = """
+            DELETE FROM booking.booking_seat
+            WHERE booking_id = @BookingId
+              AND showtime_id = @ShowId
+            """;
+
+        const string emptyBookingSql = """
+            DELETE FROM booking.booking b
+            WHERE b.id = @BookingId
+              AND NOT EXISTS (SELECT 1 FROM booking.booking_seat s WHERE s.booking_id = b.id)
+            """;
+
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        var deletedSeats = await connection.ExecuteAsync(new CommandDefinition(
+            bookingSeatSql,
+            new { BookingId = bookingId, ShowId = showId },
+            transaction,
+            cancellationToken: cancellationToken));
+
+        await connection.ExecuteAsync(new CommandDefinition(
+            emptyBookingSql,
+            new { BookingId = bookingId },
+            transaction,
+            cancellationToken: cancellationToken));
+
+        await transaction.CommitAsync(cancellationToken);
+
+        return deletedSeats > 0;
+    }
 }

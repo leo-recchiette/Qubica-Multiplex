@@ -53,4 +53,7 @@ public class BookingService : IBookingService
 
     public async Task<bool> DeleteBookingAsync(int bookingId, CancellationToken cancellationToken)
         => await _bookingRepository.DeleteBookingAsync(bookingId, cancellationToken);
+
+    public async Task<bool> DeleteBookedShowAsync(int bookingId, int showId, CancellationToken cancellationToken)
+        => await _bookingRepository.DeleteBookedShowAsync(bookingId, showId, cancellationToken);
 }
