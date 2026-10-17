@@ -1,6 +1,8 @@
 using QubicaMultiplex.Booking.Api.Clients;
 using QubicaMultiplex.Booking.Api.Repositories;
+using QubicaMultiplex.Booking.Api.Repositories.Interfaces;
 using QubicaMultiplex.Booking.Api.Services;
+using QubicaMultiplex.Booking.Api.Services.Interfaces;
 using Refit;
 
 namespace QubicaMultiplex.Booking.Api.Extensions;

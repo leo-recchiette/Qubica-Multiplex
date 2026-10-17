@@ -1,5 +1,6 @@
 using QubicaMultiplex.Catalog.Api.Models;
-using QubicaMultiplex.Catalog.Api.Repositories;
+using QubicaMultiplex.Catalog.Api.Repositories.Interfaces;
+using QubicaMultiplex.Catalog.Api.Services.Interfaces;
 
 namespace QubicaMultiplex.Catalog.Api.Services;
 

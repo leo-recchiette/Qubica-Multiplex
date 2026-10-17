@@ -4,7 +4,7 @@ using AwesomeAssertions.Extensions;
 using NSubstitute;
 using QubicaMultiplex.Booking.Api.Clients;
 using QubicaMultiplex.Booking.Api.Models;
-using QubicaMultiplex.Booking.Api.Repositories;
+using QubicaMultiplex.Booking.Api.Repositories.Interfaces;
 using QubicaMultiplex.Booking.Api.Services;
 using Refit;
 

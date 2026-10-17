@@ -1,6 +1,6 @@
 using QubicaMultiplex.Catalog.Api.Models;
 
-namespace QubicaMultiplex.Catalog.Api.Repositories;
+namespace QubicaMultiplex.Catalog.Api.Repositories.Interfaces;
 
 public interface ICatalogRepository
 {

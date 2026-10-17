@@ -1,6 +1,7 @@
 using Dapper;
 using Npgsql;
 using QubicaMultiplex.Catalog.Api.Models;
+using QubicaMultiplex.Catalog.Api.Repositories.Interfaces;
 
 namespace QubicaMultiplex.Catalog.Api.Repositories;
 

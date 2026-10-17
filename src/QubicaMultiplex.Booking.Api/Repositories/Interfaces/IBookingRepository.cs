@@ -1,6 +1,6 @@
 using QubicaMultiplex.Booking.Api.Models;
 
-namespace QubicaMultiplex.Booking.Api.Repositories;
+namespace QubicaMultiplex.Booking.Api.Repositories.Interfaces;
 
 public interface IBookingRepository
 {

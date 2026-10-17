@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using QubicaMultiplex.Catalog.Api.Models;
-using QubicaMultiplex.Catalog.Api.Services;
+using QubicaMultiplex.Catalog.Api.Services.Interfaces;
 
 namespace QubicaMultiplex.Catalog.Api.Controllers;
 

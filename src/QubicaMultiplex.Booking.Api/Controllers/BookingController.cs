@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using QubicaMultiplex.Booking.Api.Exceptions;
 using QubicaMultiplex.Booking.Api.Models;
-using QubicaMultiplex.Booking.Api.Services;
+using QubicaMultiplex.Booking.Api.Services.Interfaces;
 
 namespace QubicaMultiplex.Booking.Api.Controllers;
 

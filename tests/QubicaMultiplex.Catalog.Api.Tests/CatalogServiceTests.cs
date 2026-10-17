@@ -2,7 +2,7 @@ using AwesomeAssertions;
 using AwesomeAssertions.Extensions;
 using NSubstitute;
 using QubicaMultiplex.Catalog.Api.Models;
-using QubicaMultiplex.Catalog.Api.Repositories;
+using QubicaMultiplex.Catalog.Api.Repositories.Interfaces;
 using QubicaMultiplex.Catalog.Api.Services;
 
 namespace QubicaMultiplex.Catalog.Api.Tests;

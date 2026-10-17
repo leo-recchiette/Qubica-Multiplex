@@ -2,6 +2,7 @@ using Dapper;
 using Npgsql;
 using QubicaMultiplex.Booking.Api.Exceptions;
 using QubicaMultiplex.Booking.Api.Models;
+using QubicaMultiplex.Booking.Api.Repositories.Interfaces;
 
 namespace QubicaMultiplex.Booking.Api.Repositories;
 

@@ -1,6 +1,6 @@
 using QubicaMultiplex.Catalog.Api.Models;
 
-namespace QubicaMultiplex.Catalog.Api.Services;
+namespace QubicaMultiplex.Catalog.Api.Services.Interfaces;
 
 public interface ICatalogService
 {

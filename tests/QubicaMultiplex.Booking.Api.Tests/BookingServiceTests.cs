@@ -2,8 +2,9 @@ using AwesomeAssertions;
 using AwesomeAssertions.Extensions;
 using NSubstitute;
 using QubicaMultiplex.Booking.Api.Models;
-using QubicaMultiplex.Booking.Api.Repositories;
+using QubicaMultiplex.Booking.Api.Repositories.Interfaces;
 using QubicaMultiplex.Booking.Api.Services;
+using QubicaMultiplex.Booking.Api.Services.Interfaces;
 
 namespace QubicaMultiplex.Booking.Api.Tests;
 
