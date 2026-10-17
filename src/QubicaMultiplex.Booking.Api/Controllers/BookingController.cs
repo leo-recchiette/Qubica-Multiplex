@@ -36,7 +36,7 @@ public class BookingController : ControllerBase
             : NotFound();
     }
 
-    [HttpPost]
+    [HttpPost("book")]
     public async Task<ActionResult<BookingDetails>> CreateBookingAsync(BookingRequest request, CancellationToken cancellationToken)
     {
         try
@@ -49,7 +49,7 @@ public class BookingController : ControllerBase
         }
     }
 
-    [HttpDelete("{bookingId}")]
+    [HttpDelete("remove/{bookingId}")]
     public async Task<IActionResult> DeleteBookingAsync(int bookingId, CancellationToken cancellationToken)
     {
         var deleted = await _bookingService.DeleteBookingAsync(bookingId, cancellationToken);

@@ -58,15 +58,29 @@ public class BookingService : IBookingService
 
     public async Task<BookingDetails> CreateBookingAsync(BookingRequest request, CancellationToken cancellationToken)
     {
-        var booking = await _bookingRepository.CreateBookingAsync(request, cancellationToken);
+        var bookedShows = new List<BookedShow>();
+
+        foreach (var show in request.Shows)
+        {
+            var seats = show.Seats.ChosenSeats;
+
+            if (seats.Count == 0)
+            {
+                var availableSeats = await GetAvailableSeatsAsync(show.ShowId, cancellationToken);
+
+                seats = availableSeats!.Take(show.Seats.QuantityToBook).ToList();
+            }
+
+            bookedShows.Add(new BookedShow { ShowId = show.ShowId, Seats = seats });
+        }
+
+        var booking = await _bookingRepository.CreateBookingAsync(request.Customer, bookedShows, cancellationToken);
 
         return new BookingDetails
         {
             Id = booking.Id,
             CreatedAt = booking.CreatedAt,
-            Shows = request.Shows
-                .Select(show => new BookedShow { ShowId = show.ShowId, Seats = show.Seats.ChosenSeats })
-                .ToList()
+            Shows = bookedShows
         };
     }
 

@@ -60,7 +60,7 @@ public class BookingServiceTests
         var bookingRequest = BookingRequest();
 
         _bookingRepository
-            .CreateBookingAsync(bookingRequest, Arg.Any<CancellationToken>())
+            .CreateBookingAsync(bookingRequest.Customer, Arg.Any<List<BookedShow>>(), Arg.Any<CancellationToken>())
             .Returns(BookingEntity());
 
         var actual = await _sut.CreateBookingAsync(bookingRequest, CancellationToken.None);
