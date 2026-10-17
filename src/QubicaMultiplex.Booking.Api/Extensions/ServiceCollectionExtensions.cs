@@ -1,9 +1,13 @@
+using FluentValidation;
 using QubicaMultiplex.Booking.Api.Clients;
+using QubicaMultiplex.Booking.Api.Models;
 using QubicaMultiplex.Booking.Api.Repositories;
 using QubicaMultiplex.Booking.Api.Repositories.Interfaces;
 using QubicaMultiplex.Booking.Api.Services;
 using QubicaMultiplex.Booking.Api.Services.Interfaces;
+using QubicaMultiplex.Booking.Api.Validators;
 using Refit;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 namespace QubicaMultiplex.Booking.Api.Extensions;
 
@@ -14,6 +18,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IBookingService, BookingService>();
         services.AddScoped<ISeatService, SeatService>();
         services.AddScoped<IBookingRepository, BookingRepository>();
+
+        services.AddScoped<IValidator<BookingRequest>, BookingRequestValidator>();
+        services.AddFluentValidationAutoValidation();
 
         services.AddRefitGeneratedClient<ICatalogClient>()
             .ConfigureHttpClient(client => client.BaseAddress = new Uri(configuration["CatalogApi:BaseUrl"]!));
