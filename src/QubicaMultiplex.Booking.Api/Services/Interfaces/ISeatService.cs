@@ -6,5 +6,5 @@ public interface ISeatService
 {
     Task<IEnumerable<Seat>> GetAvailableSeatsAsync(int showId, CancellationToken cancellationToken);
 
-    Task<List<BookedShow>> AssignSeatsAsync(List<ShowBookingRequest> shows, CancellationToken cancellationToken);
+    Task<IReadOnlyCollection<BookedShow>> AssignSeatsAsync(IEnumerable<ShowBookingRequest> shows, CancellationToken cancellationToken);
 }

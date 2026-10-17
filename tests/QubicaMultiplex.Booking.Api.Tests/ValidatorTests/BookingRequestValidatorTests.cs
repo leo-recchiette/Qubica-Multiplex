@@ -107,7 +107,7 @@ public class BookingRequestValidatorTests
 
     #region Utils
 
-    private static BookingRequest BookingRequest(List<ShowBookingRequest> shows)
+    private static BookingRequest BookingRequest(IReadOnlyCollection<ShowBookingRequest> shows)
         => new BookingRequest
         {
             Customer = Customer(),

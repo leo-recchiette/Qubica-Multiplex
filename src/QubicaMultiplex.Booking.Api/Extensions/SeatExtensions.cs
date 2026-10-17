@@ -5,7 +5,7 @@ namespace QubicaMultiplex.Booking.Api.Extensions;
 
 public static class SeatExtensions
 {
-    public static List<Seat> PickSeats(this SeatSelection selection, IEnumerable<Seat> availableSeats, int showId)
+    public static IReadOnlyCollection<Seat> PickSeats(this SeatSelection selection, IEnumerable<Seat> availableSeats, int showId)
     {
         if (selection.ChosenSeats.Count > 0)
             return selection.ChosenSeats;
@@ -16,7 +16,7 @@ public static class SeatExtensions
         return availableSeats.Take(selection.QuantityToBook).ToList();
     }
 
-    public static List<Seat> EnsureAvailable(this List<Seat> seats, IEnumerable<Seat> availableSeats, int showId)
+    public static IReadOnlyCollection<Seat> EnsureAvailable(this IReadOnlyCollection<Seat> seats, IEnumerable<Seat> availableSeats, int showId)
     {
         var unavailableSeats = seats.Except(availableSeats).ToList();
 

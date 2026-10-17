@@ -48,7 +48,7 @@ public class BookingRepository : IBookingRepository
         return await connection.QueryAsync<BookingDetailsEntity>(new CommandDefinition(sql, new { CustomerId = customerId }, cancellationToken: cancellationToken));
     }
 
-    public async Task<BookingEntity> CreateBookingAsync(Customer customer, List<BookedShow> shows, CancellationToken cancellationToken)
+    public async Task<BookingEntity> CreateBookingAsync(Customer customer, IEnumerable<BookedShow> shows, CancellationToken cancellationToken)
     {
         const string bookingSql = """
             INSERT INTO booking.booking (customer_id, customer_email)

@@ -28,7 +28,7 @@ public class SeatService : ISeatService
         return showtime.Hall.GetAvailableSeats(bookedSeats).ToList();
     }
 
-    public async Task<List<BookedShow>> AssignSeatsAsync(List<ShowBookingRequest> shows, CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<BookedShow>> AssignSeatsAsync(IEnumerable<ShowBookingRequest> shows, CancellationToken cancellationToken)
     {
         var bookedShows = new List<BookedShow>();
 

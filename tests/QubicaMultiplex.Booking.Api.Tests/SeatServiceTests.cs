@@ -206,7 +206,7 @@ public class SeatServiceTests
             SeatsPerRow = 3
         };
 
-    private static ShowBookingRequest ShowBookingRequest(int showId, List<Seat> chosenSeats, int quantityToBook)
+    private static ShowBookingRequest ShowBookingRequest(int showId, IReadOnlyCollection<Seat> chosenSeats, int quantityToBook)
         => new ShowBookingRequest
         {
             ShowId = showId,

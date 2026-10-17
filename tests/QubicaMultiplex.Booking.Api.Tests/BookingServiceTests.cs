@@ -28,7 +28,7 @@ public class BookingServiceTests
             .Returns(BookedShows());
 
         _bookingRepository
-            .CreateBookingAsync(bookingRequest.Customer, Arg.Any<List<BookedShow>>(), Arg.Any<CancellationToken>())
+            .CreateBookingAsync(bookingRequest.Customer, Arg.Any<IEnumerable<BookedShow>>(), Arg.Any<CancellationToken>())
             .Returns(BookingEntity());
 
         var actual = await _sut.CreateBookingAsync(bookingRequest, CancellationToken.None);
@@ -66,7 +66,7 @@ public class BookingServiceTests
             }
         };
 
-    private static List<BookedShow> BookedShows()
+    private static IReadOnlyCollection<BookedShow> BookedShows()
         => new List<BookedShow>
         {
             new BookedShow { ShowId = 13, Seats = new List<Seat> { Seat("F", 12), Seat("F", 13) } },
