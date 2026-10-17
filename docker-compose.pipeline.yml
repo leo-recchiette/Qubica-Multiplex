@@ -1,0 +1,11 @@
+name: qubica-pipeline
+
+services:
+  build:
+    container_name: qubica-pipeline
+    tty: true
+    build:
+      context: .
+      dockerfile: pipeline.dockerfile
+    volumes:
+      - .:/work

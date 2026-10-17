@@ -106,10 +106,25 @@ La registrazione restituisce `id`, `email` e data di creazione. Risponde 400 se 
 dotnet test
 ```
 
-Senza .NET SDK installato:
-
-```bash
-docker run --rm -v "$PWD:/repo" -w /repo mcr.microsoft.com/dotnet/sdk:10.0 dotnet test
-```
+Senza .NET SDK installato si usa la [pipeline di build](#pipeline-di-build), che richiede solo Docker.
 
 Test unitari con MSTest, NSubstitute e AwesomeAssertions su service, extension method e validator.
+
+## Pipeline di build
+
+Build e test girano in un container con il .NET 10 SDK, creato all'inizio e cancellato alla fine. Jenkins e GitHub Actions eseguono gli stessi target del Makefile.
+
+| File | Cosa fa |
+|---|---|
+| `pipeline.dockerfile` | immagine di build: .NET 10 SDK su Alpine |
+| `docker-compose.pipeline.yml` | avvia il container di build `qubica-pipeline`, con il repo montato su `/work` |
+| `Makefile` | target della pipeline: ognuno esegue un comando nel container |
+| `Jenkinsfile` | pipeline Jenkins: `setup` → `build` → `test`, e `teardown` sempre alla fine |
+| `.github/workflows/ci.yml` | pipeline GitHub Actions, a ogni push e pull request: `setup` → `build` → `test` (niente `teardown`: la macchina di GitHub viene distrutta a fine esecuzione) |
+
+
+Per eseguire tutta la pipeline in locale:
+
+```bash
+make setup build test teardown
+```
