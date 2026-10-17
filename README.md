@@ -1,0 +1,104 @@
+# Qubica Multiplex
+
+Backend di un sistema di prenotazione posti per un cinema, a microservizi, in .NET 10.
+
+## Architettura
+
+| Servizio | Responsabilità | Tabelle |
+|---|---|---|
+| **Catalog** | film, sale, programmazione | `movie`, `director`, `genre`, `hall`, `showtime` |
+| **Booking** | disponibilità, prenotazioni, cancellazioni | `booking`, `booking_seat` |
+
+Ad ogni servizio è associato un db specifico. Booking chiede al Catalog la piantina della sala di uno spettacolo (`GET api/Catalog/showtime/{showId}`) e la confronta con i posti già prenotati.
+
+## Avvio
+
+Serve solo Docker.
+
+```bash
+docker compose up -d --build
+```
+
+| | URL |
+|---|---|
+| Catalog (Swagger) | http://localhost:8080/swagger |
+| Booking (Swagger) | http://localhost:8081/swagger |
+| PostgreSQL | `localhost:5432`, utente e password `postgres` |
+
+Al primo avvio Postgres esegue gli script in `db/`, che creano gli schemi e caricano i dati di esempio: 9 film, 3 sale e 18 spettacoli tra il 20 e il 22 ottobre 2026. Gli script girano solo con il database vuoto. Per ripartire da zero:
+
+```bash
+docker compose down -v
+docker compose up -d --build
+```
+
+## Struttura
+
+```
+db/       script SQL di inizializzazione (schema e dati)
+src/      QubicaMultiplex.Catalog.Api, QubicaMultiplex.Booking.Api
+tests/    un progetto di test per ogni servizio
+```
+
+Struttura a tre livelli. Ogni servizio è organizzato in `Controllers` → `Services` → `Repositories`.
+
+## API
+
+### Catalog — `:8080`
+
+| Metodo | Rotta | Descrizione |
+|---|---|---|
+| GET | `api/Catalog/allMovies` | elenco dei film (`id`, `title`) |
+| GET | `api/Catalog/details/{id}` | dettaglio di un film |
+| GET | `api/Catalog/shows/{movieId}` | spettacoli di un film, con orario e sala |
+| GET | `api/Catalog/showtime/{showId}` | uno spettacolo con la piantina della sala |
+
+### Booking — `:8081`
+
+| Metodo | Rotta | Descrizione |
+|---|---|---|
+| GET | `api/Seat/availability/{showId}` | posti liberi di uno spettacolo |
+| POST | `api/Booking/book` | prenota uno o più spettacoli |
+| GET | `api/Booking/customer/{customerId}` | prenotazioni di un cliente |
+| DELETE | `api/Booking/remove/{bookingId}` | cancella una prenotazione |
+| DELETE | `api/Booking/remove/{bookingId}/show/{showId}` | cancella un solo spettacolo di una prenotazione |
+
+### Prenotare
+
+```json
+POST api/Booking/book
+{
+  "customer": { "id": 1, "email": "user@example.com" },
+  "shows": [
+    { "showId": 13, "seats": { "chosenSeats": [{ "row": "F", "number": 12 }, { "row": "F", "number": 13 }], "quantityToBook": 2 } },
+    { "showId": 7,  "seats": { "chosenSeats": [], "quantityToBook": 3 } }
+  ]
+}
+```
+
+- **`chosenSeats` piena:** si prenotano quei posti, che devono essere tanti quanto `quantityToBook`.
+- **`chosenSeats` vuota:** il sistema assegna i primi `quantityToBook` posti liberi, a partire da A1.
+- **Tutto o niente:** se anche un solo spettacolo della richiesta non può essere prenotato, non si salva niente.
+
+La risposta contiene l'id della prenotazione e i posti assegnati per ogni spettacolo.
+
+| Codice | Quando |
+|---|---|
+| 200 | prenotazione creata |
+| 400 | richiesta non valida (es. fila diversa da una lettera A–Z, posti ripetuti, numero di posti diverso da `quantityToBook`) |
+| 404 | lo spettacolo non esiste |
+| 409 | posto non disponibile (già preso o inesistente nella sala), oppure posti liberi insufficienti |
+
+## Test
+
+```bash
+dotnet test
+```
+
+Senza .NET SDK installato:
+
+```bash
+docker run --rm -v "$PWD:/repo" -w /repo mcr.microsoft.com/dotnet/sdk:10.0 dotnet test
+```
+
+Test unitari con MSTest, NSubstitute e AwesomeAssertions su service, extension method e validator.
