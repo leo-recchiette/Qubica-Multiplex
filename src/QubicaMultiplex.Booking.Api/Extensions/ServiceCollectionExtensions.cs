@@ -10,6 +10,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddBookingServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IBookingService, BookingService>();
+        services.AddScoped<ISeatService, SeatService>();
         services.AddScoped<IBookingRepository, BookingRepository>();
 
         services.AddRefitGeneratedClient<ICatalogClient>()

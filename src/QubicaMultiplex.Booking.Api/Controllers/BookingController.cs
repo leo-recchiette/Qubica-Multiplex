@@ -10,16 +10,18 @@ namespace QubicaMultiplex.Booking.Api.Controllers;
 public class BookingController : ControllerBase
 {
     private readonly IBookingService _bookingService;
+    private readonly ISeatService _seatService;
 
-    public BookingController(IBookingService bookingService)
+    public BookingController(IBookingService bookingService, ISeatService seatService)
     {
         _bookingService = bookingService;
+        _seatService = seatService;
     }
 
     [HttpGet("availability/{showId}")]
     public async Task<ActionResult<IEnumerable<Seat>>> GetAvailableSeatsAsync(int showId, CancellationToken cancellationToken)
     {
-        var seats = await _bookingService.GetAvailableSeatsAsync(showId, cancellationToken);
+        var seats = await _seatService.GetAvailableSeatsAsync(showId, cancellationToken);
 
         return seats is not null
             ? Ok(seats)

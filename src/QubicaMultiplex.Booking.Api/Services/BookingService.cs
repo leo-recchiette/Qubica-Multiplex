@@ -1,6 +1,3 @@
-using System.Net;
-using QubicaMultiplex.Booking.Api.Clients;
-using QubicaMultiplex.Booking.Api.Extensions;
 using QubicaMultiplex.Booking.Api.Models;
 using QubicaMultiplex.Booking.Api.Repositories;
 
@@ -8,30 +5,13 @@ namespace QubicaMultiplex.Booking.Api.Services;
 
 public class BookingService : IBookingService
 {
-    private readonly ICatalogClient _catalogClient;
+    private readonly ISeatService _seatService;
     private readonly IBookingRepository _bookingRepository;
 
-    public BookingService(ICatalogClient catalogClient, IBookingRepository bookingRepository)
+    public BookingService(ISeatService seatService, IBookingRepository bookingRepository)
     {
-        _catalogClient = catalogClient;
+        _seatService = seatService;
         _bookingRepository = bookingRepository;
-    }
-
-    public async Task<IEnumerable<Seat>?> GetAvailableSeatsAsync(int showId, CancellationToken cancellationToken)
-    {
-        using var response = await _catalogClient.GetShowtimeDetailsAsync(showId, cancellationToken);
-
-        if (response.StatusCode == HttpStatusCode.NotFound)
-            return null;
-
-        if (!response.IsSuccessStatusCode)
-            throw response.Error!;
-
-        var showtime = response.Content!;
-
-        var bookedSeats = await _bookingRepository.GetBookedSeatsAsync(showId, cancellationToken);
-
-        return showtime.Hall.GetAvailableSeats(bookedSeats).ToList();
     }
 
     public async Task<IEnumerable<BookingDetails>> GetCustomerBookingsAsync(int customerId, CancellationToken cancellationToken)
@@ -58,21 +38,7 @@ public class BookingService : IBookingService
 
     public async Task<BookingDetails> CreateBookingAsync(BookingRequest request, CancellationToken cancellationToken)
     {
-        var bookedShows = new List<BookedShow>();
-
-        foreach (var show in request.Shows)
-        {
-            var seats = show.Seats.ChosenSeats;
-
-            if (seats.Count == 0)
-            {
-                var availableSeats = await GetAvailableSeatsAsync(show.ShowId, cancellationToken);
-
-                seats = availableSeats!.Take(show.Seats.QuantityToBook).ToList();
-            }
-
-            bookedShows.Add(new BookedShow { ShowId = show.ShowId, Seats = seats });
-        }
+        var bookedShows = await _seatService.AssignSeatsAsync(request.Shows, cancellationToken);
 
         var booking = await _bookingRepository.CreateBookingAsync(request.Customer, bookedShows, cancellationToken);
 
