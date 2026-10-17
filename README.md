@@ -10,7 +10,7 @@ Backend di un sistema di prenotazione posti per un cinema, a microservizi, in .N
 | **Booking** | disponibilità, prenotazioni, cancellazioni | `booking`, `booking_seat` |
 | **Customer** | registrazione degli utenti | `customer` |
 
-I servizi usano lo stesso database, ognuno con il proprio schema (`catalog`, `booking`, `customer`), e nessuno legge le tabelle degli altri. Booking chiede al Catalog la piantina della sala di uno spettacolo (`GET api/Catalog/showtime/{showId}`) e la confronta con i posti già prenotati.
+I servizi usano lo stesso database, ognuno con il proprio schema (`catalog`, `booking`, `customer`). Booking comunica con gli altri due servizi via HTTP: chiede al Catalog la piantina della sala di uno spettacolo (`GET api/Catalog/showtime/{showId}`) per confrontarla con i posti già prenotati, e a Customer se il cliente esiste (`GET api/Customer/{customerId}`).
 
 ## Avvio
 
@@ -70,7 +70,7 @@ Struttura a tre livelli. Ogni servizio è organizzato in `Controllers` → `Serv
 ```json
 POST api/Booking/book
 {
-  "customer": { "id": 1, "email": "user@example.com" },
+  "customerId": 1,
   "shows": [
     { "showId": 13, "seats": { "chosenSeats": [{ "row": "F", "number": 12 }, { "row": "F", "number": 13 }], "quantityToBook": 2 } },
     { "showId": 7,  "seats": { "chosenSeats": [], "quantityToBook": 3 } }
@@ -88,13 +88,14 @@ La risposta contiene l'id della prenotazione e i posti assegnati per ogni spetta
 |---|---|
 | 200 | prenotazione creata |
 | 400 | richiesta non valida (es. fila diversa da una lettera A–Z, posti ripetuti, numero di posti diverso da `quantityToBook`) |
-| 404 | lo spettacolo non esiste |
+| 404 | il cliente o lo spettacolo non esiste |
 | 409 | posto non disponibile (già preso o inesistente nella sala), oppure posti liberi insufficienti |
 
 ### Customer — `:8082`
 
 | Metodo | Rotta | Descrizione |
 |---|---|---|
+| GET | `api/Customer/{customerId}` | dettaglio di un utente |
 | POST | `api/Customer/register` | registra un utente: `{ "email": "user@example.com" }` |
 
 La registrazione restituisce `id`, `email` e data di creazione. Risponde 400 se l'email non è nel formato `nome@dominio.estensione` e 409 se è già registrata.

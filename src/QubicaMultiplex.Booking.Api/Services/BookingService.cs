@@ -1,3 +1,5 @@
+using QubicaMultiplex.Booking.Api.Clients;
+using QubicaMultiplex.Booking.Api.Extensions;
 using QubicaMultiplex.Booking.Api.Models;
 using QubicaMultiplex.Booking.Api.Repositories.Interfaces;
 using QubicaMultiplex.Booking.Api.Services.Interfaces;
@@ -7,11 +9,13 @@ namespace QubicaMultiplex.Booking.Api.Services;
 public class BookingService : IBookingService
 {
     private readonly ISeatService _seatService;
+    private readonly ICustomerClient _customerClient;
     private readonly IBookingRepository _bookingRepository;
 
-    public BookingService(ISeatService seatService, IBookingRepository bookingRepository)
+    public BookingService(ISeatService seatService, ICustomerClient customerClient, IBookingRepository bookingRepository)
     {
         _seatService = seatService;
+        _customerClient = customerClient;
         _bookingRepository = bookingRepository;
     }
 
@@ -39,9 +43,13 @@ public class BookingService : IBookingService
 
     public async Task<BookingDetails> CreateBookingAsync(BookingRequest request, CancellationToken cancellationToken)
     {
+        using var customerResponse = await _customerClient.GetCustomerAsync(request.CustomerId, cancellationToken);
+
+        customerResponse.GetCustomerOrThrow(request.CustomerId);
+
         var bookedShows = await _seatService.AssignSeatsAsync(request.Shows, cancellationToken);
 
-        var booking = await _bookingRepository.CreateBookingAsync(request.Customer, bookedShows, cancellationToken);
+        var booking = await _bookingRepository.CreateBookingAsync(request.CustomerId, bookedShows, cancellationToken);
 
         return new BookingDetails
         {

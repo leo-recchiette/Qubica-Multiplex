@@ -15,6 +15,22 @@ public class CustomerRepository : ICustomerRepository
         _connectionString = configuration.GetConnectionString("Customer")!;
     }
 
+    public async Task<CustomerDetails> GetCustomerAsync(int customerId, CancellationToken cancellationToken)
+    {
+        const string sql = """
+            SELECT id,
+                   email,
+                   created_at AS CreatedAt
+            FROM customer.customer
+            WHERE id = @CustomerId
+            """;
+
+        await using var connection = new NpgsqlConnection(_connectionString);
+
+        return await connection.QueryFirstOrDefaultAsync<CustomerDetails>(new CommandDefinition(sql, new { CustomerId = customerId }, cancellationToken: cancellationToken))
+            ?? throw new CustomerNotFoundException(customerId);
+    }
+
     public async Task<CustomerDetails> CreateCustomerAsync(string email, CancellationToken cancellationToken)
     {
         const string sql = """

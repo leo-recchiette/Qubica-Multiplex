@@ -11,6 +11,9 @@ public class CustomerService : ICustomerService
     public CustomerService(ICustomerRepository customerRepository)
         => _customerRepository = customerRepository;
 
+    public async Task<CustomerDetails> GetCustomerAsync(int customerId, CancellationToken cancellationToken)
+        => await _customerRepository.GetCustomerAsync(customerId, cancellationToken);
+
     public async Task<CustomerDetails> CreateCustomerAsync(CustomerRequest request, CancellationToken cancellationToken)
         => await _customerRepository.CreateCustomerAsync(request.Email, cancellationToken);
 }

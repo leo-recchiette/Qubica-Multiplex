@@ -20,4 +20,18 @@ public static class ApiResponseExtensions
 
         return response.Content!;
     }
+
+    public static Customer GetCustomerOrThrow(this IApiResponse<Customer> response, int customerId)
+    {
+        switch (response)
+        {
+            case { StatusCode: HttpStatusCode.NotFound }:
+                throw new CustomerNotFoundException(customerId);
+
+            case { IsSuccessStatusCode: false }:
+                throw response.Error!;
+        }
+
+        return response.Content!;
+    }
 }

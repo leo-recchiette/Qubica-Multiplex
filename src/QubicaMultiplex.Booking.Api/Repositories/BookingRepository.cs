@@ -48,11 +48,11 @@ public class BookingRepository : IBookingRepository
         return await connection.QueryAsync<BookingDetailsEntity>(new CommandDefinition(sql, new { CustomerId = customerId }, cancellationToken: cancellationToken));
     }
 
-    public async Task<BookingEntity> CreateBookingAsync(Customer customer, IEnumerable<BookedShow> shows, CancellationToken cancellationToken)
+    public async Task<BookingEntity> CreateBookingAsync(int customerId, IEnumerable<BookedShow> shows, CancellationToken cancellationToken)
     {
         const string bookingSql = """
-            INSERT INTO booking.booking (customer_id, customer_email)
-            VALUES (@CustomerId, @CustomerEmail)
+            INSERT INTO booking.booking (customer_id)
+            VALUES (@CustomerId)
             RETURNING id,
                       created_at AS CreatedAt
             """;
@@ -70,7 +70,7 @@ public class BookingRepository : IBookingRepository
         {
             var booking = await connection.QuerySingleAsync<BookingEntity>(new CommandDefinition(
                 bookingSql,
-                new { CustomerId = customer.Id, CustomerEmail = customer.Email },
+                new { CustomerId = customerId },
                 transaction,
                 cancellationToken: cancellationToken));
 

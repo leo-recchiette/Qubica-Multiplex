@@ -2,10 +2,9 @@ CREATE SCHEMA IF NOT EXISTS booking;
 
 CREATE TABLE booking.booking
 (
-    id             integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    customer_id    integer   NOT NULL,
-    customer_email text      NOT NULL,
-    created_at     timestamp NOT NULL DEFAULT now()
+    id          integer   GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    customer_id integer   NOT NULL,
+    created_at  timestamp NOT NULL DEFAULT now()
 );
 
 CREATE TABLE booking.booking_seat

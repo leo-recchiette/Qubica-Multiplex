@@ -7,13 +7,9 @@ public class BookingRequestValidator : AbstractValidator<BookingRequest>
 {
     public BookingRequestValidator()
     {
-        RuleFor(request => request.Customer.Id)
+        RuleFor(request => request.CustomerId)
             .GreaterThan(0)
             .WithMessage("Customer id must be greater than 0.");
-
-        RuleFor(request => request.Customer.Email)
-            .NotEmpty().WithMessage("Customer email is required.")
-            .EmailAddress().WithMessage("Customer email is not valid.");
 
         RuleFor(request => request.Shows)
             .NotEmpty()

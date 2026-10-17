@@ -33,6 +33,10 @@ public class BookingController : ControllerBase
         {
             return await _bookingService.CreateBookingAsync(request, cancellationToken);
         }
+        catch (CustomerNotFoundException exception)
+        {
+            return Problem(detail: exception.Message, statusCode: StatusCodes.Status404NotFound);
+        }
         catch (ShowNotFoundException exception)
         {
             return Problem(detail: exception.Message, statusCode: StatusCodes.Status404NotFound);

@@ -26,7 +26,7 @@ public class BookingRequestValidatorTests
 
         var actual = _sut.TestValidate(bookingRequest);
 
-        actual  
+        actual
             .ShouldHaveValidationErrorFor(request => request.Shows)
             .WithErrorMessage("At least one show must be booked.");
     }
@@ -36,44 +36,14 @@ public class BookingRequestValidatorTests
     {
         var bookingRequest = BookingRequest(new List<ShowBookingRequest> { ShowBookingRequest() }) with
         {
-            Customer = Customer() with { Id = 0 }
+            CustomerId = 0
         };
 
         var actual = _sut.TestValidate(bookingRequest);
 
         actual
-            .ShouldHaveValidationErrorFor(request => request.Customer.Id)
+            .ShouldHaveValidationErrorFor(request => request.CustomerId)
             .WithErrorMessage("Customer id must be greater than 0.");
-    }
-
-    [TestMethod]
-    public void Should_HaveValidationError_When_CustomerEmailIsNotValid()
-    {
-        var bookingRequest = BookingRequest(new List<ShowBookingRequest> { ShowBookingRequest() }) with
-        {
-            Customer = Customer() with { Email = "not-an-email" }
-        };
-
-        var actual = _sut.TestValidate(bookingRequest);
-
-        actual
-            .ShouldHaveValidationErrorFor(request => request.Customer.Email)
-            .WithErrorMessage("Customer email is not valid.");
-    }
-
-    [TestMethod]
-    public void Should_HaveValidationError_When_CustomerEmailIsEmpty()
-    {
-        var bookingRequest = BookingRequest(new List<ShowBookingRequest> { ShowBookingRequest() }) with
-        {
-            Customer = Customer() with { Email = "" }
-        };
-
-        var actual = _sut.TestValidate(bookingRequest);
-
-        actual
-            .ShouldHaveValidationErrorFor(request => request.Customer.Email)
-            .WithErrorMessage("Customer email is required.");
     }
 
     [TestMethod]
@@ -110,15 +80,8 @@ public class BookingRequestValidatorTests
     private static BookingRequest BookingRequest(IReadOnlyCollection<ShowBookingRequest> shows)
         => new BookingRequest
         {
-            Customer = Customer(),
+            CustomerId = 1,
             Shows = shows
-        };
-
-    private static Customer Customer()
-        => new Customer
-        {
-            Id = 1,
-            Email = "leonardo@example.com"
         };
 
     private static ShowBookingRequest ShowBookingRequest()

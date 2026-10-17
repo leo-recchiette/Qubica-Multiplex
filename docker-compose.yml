@@ -13,6 +13,7 @@ services:
     environment:
       ConnectionStrings__Booking: "Host=db;Port=5432;Database=postgres;Username=postgres;Password=postgres"
       CatalogApi__BaseUrl: "http://catalog:8080/"
+      CustomerApi__BaseUrl: "http://customer:8080/"
 
   customer:
     build: src/QubicaMultiplex.Customer.Api

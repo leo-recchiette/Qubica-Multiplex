@@ -25,6 +25,9 @@ public static class ServiceCollectionExtensions
         services.AddRefitGeneratedClient<ICatalogClient>()
             .ConfigureHttpClient(client => client.BaseAddress = new Uri(configuration["CatalogApi:BaseUrl"]!));
 
+        services.AddRefitGeneratedClient<ICustomerClient>()
+            .ConfigureHttpClient(client => client.BaseAddress = new Uri(configuration["CustomerApi:BaseUrl"]!));
+
         return services;
     }
 }

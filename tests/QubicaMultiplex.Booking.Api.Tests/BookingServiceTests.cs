@@ -1,10 +1,14 @@
+using System.Net;
 using AwesomeAssertions;
 using AwesomeAssertions.Extensions;
 using NSubstitute;
+using QubicaMultiplex.Booking.Api.Clients;
+using QubicaMultiplex.Booking.Api.Exceptions;
 using QubicaMultiplex.Booking.Api.Models;
 using QubicaMultiplex.Booking.Api.Repositories.Interfaces;
 using QubicaMultiplex.Booking.Api.Services;
 using QubicaMultiplex.Booking.Api.Services.Interfaces;
+using Refit;
 
 namespace QubicaMultiplex.Booking.Api.Tests;
 
@@ -12,23 +16,28 @@ namespace QubicaMultiplex.Booking.Api.Tests;
 public class BookingServiceTests
 {
     private readonly ISeatService _seatService = Substitute.For<ISeatService>();
+    private readonly ICustomerClient _customerClient = Substitute.For<ICustomerClient>();
     private readonly IBookingRepository _bookingRepository = Substitute.For<IBookingRepository>();
     private readonly BookingService _sut;
 
     public BookingServiceTests()
-        => _sut = new BookingService(_seatService, _bookingRepository);
+        => _sut = new BookingService(_seatService, _customerClient, _bookingRepository);
 
     [TestMethod]
     public async Task Should_ReturnBookingDetails_When_BookingIsCreated()
     {
         var bookingRequest = BookingRequest();
 
+        _customerClient
+            .GetCustomerAsync(bookingRequest.CustomerId, Arg.Any<CancellationToken>())
+            .Returns(ApiResponse(HttpStatusCode.OK, Customer()));
+
         _seatService
             .AssignSeatsAsync(bookingRequest.Shows, Arg.Any<CancellationToken>())
             .Returns(BookedShows());
 
         _bookingRepository
-            .CreateBookingAsync(bookingRequest.Customer, Arg.Any<IEnumerable<BookedShow>>(), Arg.Any<CancellationToken>())
+            .CreateBookingAsync(bookingRequest.CustomerId, Arg.Any<IEnumerable<BookedShow>>(), Arg.Any<CancellationToken>())
             .Returns(BookingEntity());
 
         var actual = await _sut.CreateBookingAsync(bookingRequest, CancellationToken.None);
@@ -38,7 +47,35 @@ public class BookingServiceTests
         actual.Should().BeEquivalentTo(expected);
     }
 
+    [TestMethod]
+    public async Task Should_ThrowCustomerNotFoundException_When_CustomerDoesNotExist()
+    {
+        var bookingRequest = BookingRequest();
+
+        _customerClient
+            .GetCustomerAsync(bookingRequest.CustomerId, Arg.Any<CancellationToken>())
+            .Returns(ApiResponse(HttpStatusCode.NotFound));
+
+        var actual = () => _sut.CreateBookingAsync(bookingRequest, CancellationToken.None);
+
+        await actual.Should().ThrowAsync<CustomerNotFoundException>()
+            .WithMessage("Customer 1 does not exist.");
+    }
+
     #region Utils
+
+    private static IApiResponse<Customer> ApiResponse(HttpStatusCode statusCode, Customer? content = null)
+        => new ApiResponse<Customer>(
+            new HttpResponseMessage(statusCode) { RequestMessage = new HttpRequestMessage() },
+            content,
+            new RefitSettings());
+
+    private static Customer Customer()
+        => new Customer
+        {
+            Id = 1,
+            Email = "leonardo@example.com"
+        };
 
     private static Seat Seat(string row, int number)
         => new Seat
@@ -50,7 +87,7 @@ public class BookingServiceTests
     private static BookingRequest BookingRequest()
         => new BookingRequest
         {
-            Customer = new Customer { Id = 1, Email = "leonardo@example.com" },
+            CustomerId = 1,
             Shows = new List<ShowBookingRequest>
             {
                 new ShowBookingRequest

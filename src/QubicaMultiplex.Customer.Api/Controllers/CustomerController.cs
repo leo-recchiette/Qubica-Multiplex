@@ -16,6 +16,19 @@ public class CustomerController : ControllerBase
         _customerService = customerService;
     }
 
+    [HttpGet("{customerId}")]
+    public async Task<ActionResult<CustomerDetails>> GetCustomerAsync(int customerId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await _customerService.GetCustomerAsync(customerId, cancellationToken);
+        }
+        catch (CustomerNotFoundException exception)
+        {
+            return Problem(detail: exception.Message, statusCode: StatusCodes.Status404NotFound);
+        }
+    }
+
     [HttpPost("register")]
     public async Task<ActionResult<CustomerDetails>> CreateCustomerAsync(CustomerRequest request, CancellationToken cancellationToken)
     {
