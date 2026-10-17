@@ -8,8 +8,9 @@ Backend di un sistema di prenotazione posti per un cinema, a microservizi, in .N
 |---|---|---|
 | **Catalog** | film, sale, programmazione | `movie`, `director`, `genre`, `hall`, `showtime` |
 | **Booking** | disponibilità, prenotazioni, cancellazioni | `booking`, `booking_seat` |
+| **Customer** | registrazione degli utenti | `customer` |
 
-Ad ogni servizio è associato un db specifico. Booking chiede al Catalog la piantina della sala di uno spettacolo (`GET api/Catalog/showtime/{showId}`) e la confronta con i posti già prenotati.
+I servizi usano lo stesso database, ognuno con il proprio schema (`catalog`, `booking`, `customer`), e nessuno legge le tabelle degli altri. Booking chiede al Catalog la piantina della sala di uno spettacolo (`GET api/Catalog/showtime/{showId}`) e la confronta con i posti già prenotati.
 
 ## Avvio
 
@@ -23,6 +24,7 @@ docker compose up -d --build
 |---|---|
 | Catalog (Swagger) | http://localhost:8080/swagger |
 | Booking (Swagger) | http://localhost:8081/swagger |
+| Customer (Swagger) | http://localhost:8082/swagger |
 | PostgreSQL | `localhost:5432`, utente e password `postgres` |
 
 Al primo avvio Postgres esegue gli script in `db/`, che creano gli schemi e caricano i dati di esempio: 9 film, 3 sale e 18 spettacoli tra il 20 e il 22 ottobre 2026. Gli script girano solo con il database vuoto. Per ripartire da zero:
@@ -36,7 +38,7 @@ docker compose up -d --build
 
 ```
 db/       script SQL di inizializzazione (schema e dati)
-src/      QubicaMultiplex.Catalog.Api, QubicaMultiplex.Booking.Api
+src/      QubicaMultiplex.Catalog.Api, QubicaMultiplex.Booking.Api, QubicaMultiplex.Customer.Api
 tests/    un progetto di test per ogni servizio
 ```
 
@@ -88,6 +90,14 @@ La risposta contiene l'id della prenotazione e i posti assegnati per ogni spetta
 | 400 | richiesta non valida (es. fila diversa da una lettera A–Z, posti ripetuti, numero di posti diverso da `quantityToBook`) |
 | 404 | lo spettacolo non esiste |
 | 409 | posto non disponibile (già preso o inesistente nella sala), oppure posti liberi insufficienti |
+
+### Customer — `:8082`
+
+| Metodo | Rotta | Descrizione |
+|---|---|---|
+| POST | `api/Customer/register` | registra un utente: `{ "email": "user@example.com" }` |
+
+La registrazione restituisce `id`, `email` e data di creazione. Risponde 400 se l'email non è nel formato `nome@dominio.estensione` e 409 se è già registrata.
 
 ## Test
 
