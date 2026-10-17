@@ -37,6 +37,10 @@ public class BookingController : ControllerBase
         {
             return Problem(detail: exception.Message, statusCode: StatusCodes.Status404NotFound);
         }
+        catch (NotEnoughSeatsException exception)
+        {
+            return Problem(detail: exception.Message, statusCode: StatusCodes.Status409Conflict);
+        }
         catch (SeatAlreadyBookedException exception)
         {
             return Problem(detail: exception.Message, statusCode: StatusCodes.Status409Conflict);

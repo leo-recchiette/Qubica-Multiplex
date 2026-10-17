@@ -1,4 +1,5 @@
 using QubicaMultiplex.Booking.Api.Clients;
+using QubicaMultiplex.Booking.Api.Exceptions;
 using QubicaMultiplex.Booking.Api.Extensions;
 using QubicaMultiplex.Booking.Api.Models;
 using QubicaMultiplex.Booking.Api.Repositories.Interfaces;
@@ -39,7 +40,12 @@ public class SeatService : ISeatService
             var seats = show.Seats.ChosenSeats;
 
             if (seats.Count == 0)
+            {
+                if (availableSeats.Count() < show.Seats.QuantityToBook)
+                    throw new NotEnoughSeatsException(show.ShowId, show.Seats.QuantityToBook, availableSeats.Count());
+
                 seats = availableSeats.Take(show.Seats.QuantityToBook).ToList();
+            }
 
             bookedShows.Add(new BookedShow { ShowId = show.ShowId, Seats = seats });
         }

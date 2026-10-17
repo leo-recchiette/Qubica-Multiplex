@@ -120,6 +120,28 @@ public class SeatServiceTests
         actual.Should().BeEquivalentTo(expected);
     }
 
+    [TestMethod]
+    public async Task Should_ThrowNotEnoughSeatsException_When_AvailableSeatsAreNotEnough()
+    {
+        _catalogClient
+            .GetShowtimeDetailsAsync(13, Arg.Any<CancellationToken>())
+            .Returns(ApiResponse(HttpStatusCode.OK, ShowtimeDetails()));
+
+        _bookingRepository
+            .GetBookedSeatsAsync(13, Arg.Any<CancellationToken>())
+            .Returns(new List<Seat> { Seat("A", 1), Seat("A", 2), Seat("A", 3), Seat("B", 1) });
+
+        var shows = new List<ShowBookingRequest>
+        {
+            ShowBookingRequest(13, new List<Seat>(), 5)
+        };
+
+        var actual = () => _sut.AssignSeatsAsync(shows, CancellationToken.None);
+
+        await actual.Should().ThrowAsync<NotEnoughSeatsException>()
+            .WithMessage("Show 13 has only 2 available seats, 5 requested.");
+    }
+
     #region Utils
 
     private static IApiResponse<ShowtimeDetails> ApiResponse(HttpStatusCode statusCode, ShowtimeDetails? content = null)
