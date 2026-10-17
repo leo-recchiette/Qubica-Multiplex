@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using QubicaMultiplex.Booking.Api.Exceptions;
 using QubicaMultiplex.Booking.Api.Models;
 using QubicaMultiplex.Booking.Api.Services.Interfaces;
 
@@ -18,10 +19,15 @@ public class SeatController : ControllerBase
     [HttpGet("availability/{showId}")]
     public async Task<ActionResult<IEnumerable<Seat>>> GetAvailableSeatsAsync(int showId, CancellationToken cancellationToken)
     {
-        var seats = await _seatService.GetAvailableSeatsAsync(showId, cancellationToken);
+        try
+        {
+            var seats = await _seatService.GetAvailableSeatsAsync(showId, cancellationToken);
 
-        return seats is not null
-            ? Ok(seats)
-            : NotFound();
+            return Ok(seats);
+        }
+        catch (ShowNotFoundException exception)
+        {
+            return Problem(detail: exception.Message, statusCode: StatusCodes.Status404NotFound);
+        }
     }
 }

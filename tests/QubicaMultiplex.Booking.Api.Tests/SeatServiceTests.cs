@@ -3,6 +3,7 @@ using AwesomeAssertions;
 using AwesomeAssertions.Extensions;
 using NSubstitute;
 using QubicaMultiplex.Booking.Api.Clients;
+using QubicaMultiplex.Booking.Api.Exceptions;
 using QubicaMultiplex.Booking.Api.Models;
 using QubicaMultiplex.Booking.Api.Repositories.Interfaces;
 using QubicaMultiplex.Booking.Api.Services;
@@ -21,15 +22,15 @@ public class SeatServiceTests
         => _sut = new SeatService(_catalogClient, _bookingRepository);
 
     [TestMethod]
-    public async Task Should_ReturnNull_When_ShowtimeDoesNotExist()
+    public async Task Should_ThrowShowNotFoundException_When_ShowtimeDoesNotExist()
     {
         _catalogClient
             .GetShowtimeDetailsAsync(999, Arg.Any<CancellationToken>())
             .Returns(ApiResponse(HttpStatusCode.NotFound));
 
-        var actual = await _sut.GetAvailableSeatsAsync(999, CancellationToken.None);
+        var actual = () => _sut.GetAvailableSeatsAsync(999, CancellationToken.None);
 
-        actual.Should().BeNull();
+        await actual.Should().ThrowAsync<ShowNotFoundException>();
     }
 
     [TestMethod]
@@ -57,6 +58,10 @@ public class SeatServiceTests
     [TestMethod]
     public async Task Should_KeepChosenSeats_When_SeatsAreChosen()
     {
+        _catalogClient
+            .GetShowtimeDetailsAsync(13, Arg.Any<CancellationToken>())
+            .Returns(ApiResponse(HttpStatusCode.OK, ShowtimeDetails()));
+
         var shows = new List<ShowBookingRequest>
         {
             ShowBookingRequest(13, new List<Seat> { Seat("B", 2), Seat("B", 3) }, 2)
@@ -70,6 +75,23 @@ public class SeatServiceTests
         };
 
         actual.Should().BeEquivalentTo(expected);
+    }
+
+    [TestMethod]
+    public async Task Should_ThrowShowNotFoundException_When_ChosenSeatsAreForAMissingShow()
+    {
+        _catalogClient
+            .GetShowtimeDetailsAsync(999, Arg.Any<CancellationToken>())
+            .Returns(ApiResponse(HttpStatusCode.NotFound));
+
+        var shows = new List<ShowBookingRequest>
+        {
+            ShowBookingRequest(999, new List<Seat> { Seat("B", 2) }, 1)
+        };
+
+        var actual = () => _sut.AssignSeatsAsync(shows, CancellationToken.None);
+
+        await actual.Should().ThrowAsync<ShowNotFoundException>();
     }
 
     [TestMethod]

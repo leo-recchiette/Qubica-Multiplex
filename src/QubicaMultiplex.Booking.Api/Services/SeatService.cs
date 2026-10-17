@@ -1,4 +1,3 @@
-using System.Net;
 using QubicaMultiplex.Booking.Api.Clients;
 using QubicaMultiplex.Booking.Api.Extensions;
 using QubicaMultiplex.Booking.Api.Models;
@@ -18,17 +17,11 @@ public class SeatService : ISeatService
         _bookingRepository = bookingRepository;
     }
 
-    public async Task<IEnumerable<Seat>?> GetAvailableSeatsAsync(int showId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Seat>> GetAvailableSeatsAsync(int showId, CancellationToken cancellationToken)
     {
         using var response = await _catalogClient.GetShowtimeDetailsAsync(showId, cancellationToken);
 
-        if (response.StatusCode == HttpStatusCode.NotFound)
-            return null;
-
-        if (!response.IsSuccessStatusCode)
-            throw response.Error!;
-
-        var showtime = response.Content!;
+        var showtime = response.GetShowtimeOrThrow(showId);
 
         var bookedSeats = await _bookingRepository.GetBookedSeatsAsync(showId, cancellationToken);
 
@@ -41,14 +34,12 @@ public class SeatService : ISeatService
 
         foreach (var show in shows)
         {
+            var availableSeats = await GetAvailableSeatsAsync(show.ShowId, cancellationToken);
+
             var seats = show.Seats.ChosenSeats;
 
             if (seats.Count == 0)
-            {
-                var availableSeats = await GetAvailableSeatsAsync(show.ShowId, cancellationToken);
-
-                seats = availableSeats!.Take(show.Seats.QuantityToBook).ToList();
-            }
+                seats = availableSeats.Take(show.Seats.QuantityToBook).ToList();
 
             bookedShows.Add(new BookedShow { ShowId = show.ShowId, Seats = seats });
         }
