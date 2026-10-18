@@ -17,7 +17,8 @@ I servizi usano lo stesso database, ognuno con il proprio schema (`catalog`, `bo
 Serve solo Docker.
 
 ```bash
-docker compose up -d --build
+docker compose up -d --build 
+docker compose down -v
 ```
 
 | | URL |
@@ -27,22 +28,30 @@ docker compose up -d --build
 | Customer (Swagger) | http://localhost:8082/swagger |
 | PostgreSQL | `localhost:5432`, utente e password `postgres` |
 
-Al primo avvio Postgres esegue gli script in `db/`, che creano gli schemi e caricano i dati di esempio: 9 film, 3 sale e 18 spettacoli tra il 20 e il 22 ottobre 2026. Gli script girano solo con il database vuoto. Per ripartire da zero:
-
-```bash
-docker compose down -v
-docker compose up -d --build
-```
+Al primo avvio Postgres esegue gli script in `db/`, che creano gli schemi e caricano i dati di esempio. 
 
 ## Struttura
 
 ```
-db/       script SQL di inizializzazione (schema e dati)
-src/      QubicaMultiplex.Catalog.Api, QubicaMultiplex.Booking.Api, QubicaMultiplex.Customer.Api
-tests/    un progetto di test per ogni servizio
+├── db/        script SQL di inizializzazione (schema e dati)
+│   ├── 01-catalog-schema.sql
+│   ├── 02-catalog-data.sql
+│   ├── 03-booking-schema.sql
+│   └── 04-customer-schema.sql
+├── src/       un progetto per servizio
+│   ├── QubicaMultiplex.Catalog.Api
+│   ├── QubicaMultiplex.Booking.Api
+│   └── QubicaMultiplex.Customer.Api
+└── tests/     per ogni servizio unit test e test di integrazione
+    ├── QubicaMultiplex.Catalog.Api.Tests
+    ├── QubicaMultiplex.Catalog.Api.IntegrationTests
+    ├── QubicaMultiplex.Booking.Api.Tests
+    ├── QubicaMultiplex.Booking.Api.IntegrationTests
+    ├── QubicaMultiplex.Customer.Api.Tests
+    └── QubicaMultiplex.Customer.Api.IntegrationTests
 ```
 
-Struttura a tre livelli. Ogni servizio è organizzato in `Controllers` → `Services` → `Repositories`.
+Ogni progetto è composto su con una struttura a tre livelli: `Controllers` → `Services` → `Repositories`.
 
 ## API
 
@@ -102,13 +111,14 @@ La registrazione restituisce `id`, `email` e data di creazione. Risponde 400 se 
 
 ## Test
 
-```bash
-dotnet test
-```
+| Progetti | Cosa provano |
+|---|---|
+| `*.Tests` | logica di service, extension method e validator |
+| `*.IntegrationTests` | rotte HTTP, query SQL e vincoli del database |
 
-Senza .NET SDK installato si usa la [pipeline di build](#pipeline-di-build), che richiede solo Docker.
+Tutti i test si lanciano con la [pipeline di build](#pipeline-di-build), che avvia anche Postgres e richiede solo Docker. Con il .NET SDK installato, `dotnet test` su un progetto `*.Tests` lancia gli unit test senza database.
 
-Test unitari con MSTest, NSubstitute e AwesomeAssertions su service, extension method e validator.
+Ogni test di integrazione confronta la risposta con uno snapshot `*.verified.txt` salvato accanto al test. Se la risposta cambia, il test fallisce e Verify crea un file `*.received.txt`: se il nuovo contenuto è corretto, va rinominato in `.verified.txt` e committato.
 
 ## Pipeline di build
 
@@ -117,7 +127,7 @@ Build e test girano in un container con il .NET 10 SDK, creato all'inizio e canc
 | File | Cosa fa |
 |---|---|
 | `pipeline.dockerfile` | immagine di build: .NET 10 SDK su Alpine |
-| `docker-compose.pipeline.yml` | avvia il container di build `qubica-pipeline`, con il repo montato su `/work` |
+| `docker-compose.pipeline.yml` | avvia il container di build `qubica-pipeline`, con il repo montato su `/work`, e Postgres con gli script di `db/` per i test di integrazione |
 | `Makefile` | target della pipeline: ognuno esegue un comando nel container |
 | `Jenkinsfile` | pipeline Jenkins: `setup` → `build` → `test`, e `teardown` sempre alla fine |
 | `.github/workflows/ci.yml` | pipeline GitHub Actions, a ogni push e pull request: `setup` → `build` → `test` (niente `teardown`: la macchina di GitHub viene distrutta a fine esecuzione) |
