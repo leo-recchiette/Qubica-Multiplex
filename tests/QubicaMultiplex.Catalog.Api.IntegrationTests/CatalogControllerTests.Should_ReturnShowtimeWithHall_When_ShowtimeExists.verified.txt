@@ -1,0 +1,9 @@
+﻿{
+  showId: 1,
+  startsAt: 2026-10-20T17:00:00,
+  hall: {
+    name: Hall 2,
+    lastRow: F,
+    seatsPerRow: 20
+  }
+}

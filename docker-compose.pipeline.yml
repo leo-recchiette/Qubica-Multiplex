@@ -9,3 +9,21 @@ services:
       dockerfile: pipeline.dockerfile
     volumes:
       - .:/work
+    environment:
+      ConnectionStrings__Catalog: "Host=db;Port=5432;Database=postgres;Username=postgres;Password=postgres"
+      ConnectionStrings__Booking: "Host=db;Port=5432;Database=postgres;Username=postgres;Password=postgres"
+      ConnectionStrings__Customer: "Host=db;Port=5432;Database=postgres;Username=postgres;Password=postgres"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: pg_isready -U postgres -h localhost
+      interval: 2s
+      retries: 30

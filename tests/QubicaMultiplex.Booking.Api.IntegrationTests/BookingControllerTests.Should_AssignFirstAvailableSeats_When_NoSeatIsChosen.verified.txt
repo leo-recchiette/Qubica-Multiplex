@@ -1,0 +1,19 @@
+﻿{
+  id: 2,
+  createdAt: DateTimeOffset_1,
+  shows: [
+    {
+      showId: 1,
+      seats: [
+        {
+          row: A,
+          number: 2
+        },
+        {
+          row: B,
+          number: 1
+        }
+      ]
+    }
+  ]
+}

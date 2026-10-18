@@ -1,0 +1,9 @@
+﻿{
+  id: 1,
+  title: The Lord of the Rings: The Fellowship of the Ring,
+  description: A young hobbit, Frodo, inherits the One Ring and sets out with eight companions to destroy it in the fires of Mount Doom.,
+  director: Peter Jackson,
+  genre: Fantasy,
+  durationMinutes: 178,
+  releaseDate: 2001-12-19T00:00:00
+}
